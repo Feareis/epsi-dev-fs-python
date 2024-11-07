@@ -9,11 +9,11 @@
   <samp>
     <br>
     「 <b>EPSI Dev FS</b> Projet Python Bomberman 」
-    <br/>
-          ![projet bomberman](media/projet bomberman.png)
-    <br/>
+    <br>
   </samp>
 </p>
+
+![projet bomberman](media/projet bomberman.png)
 
  # About project -
  ## Goals -
