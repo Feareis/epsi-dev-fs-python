@@ -19,9 +19,13 @@
 
  <p>
 - Manipuler les variables et les types de données en Python.
+         <br/>
 - Utiliser des structures de contrôle comme les conditions et les boucles.
+         <br/>
 - Générer des nombres aléatoires.
+         <br/>
 - Gérer les entrées utilisateur.
+         <br/>
 - Implémenter des fonctionnalités de base d’un jeu et introduire des éléments de gamification
   (niveaux, scores, etc.). 
  </p>
