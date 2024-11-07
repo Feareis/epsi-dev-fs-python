@@ -9,8 +9,9 @@
   <samp>
     <br>
     「 <b>EPSI Dev FS</b> Projet Python Bomberman 」
-    <br>
-    <br>
+    <br/>
+          ![projet bomberman](media/projet bomberman.png)
+    <br/>
   </samp>
 </p>
 
