@@ -13,7 +13,7 @@
   </samp>
 </p>
 
-![projet bomberman](media/projet bomberman.png)
+![projet bomberman](media/projet%20bomberman.png)
 
  # About project -
  ## Goals -
