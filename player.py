@@ -20,3 +20,7 @@ def move_player(player_position, direction, plate):
 
     # Si le déplacement est impossible, on reste à la même position
     return x, y
+
+
+def check_collision(player_position, foes):
+    return True if player_position in foes else False
