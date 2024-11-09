@@ -6,8 +6,8 @@ moves = {
     "d": (0, 1)
 }
 
-
 def move_player(player_position, direction, plate):
+
     x, y = player_position
 
     # Si la direction est correcte, on additionne les coordonnées de mouvement à la position actuelle du joueur
@@ -23,4 +23,4 @@ def move_player(player_position, direction, plate):
 
 
 def check_collision(player_position, foes):
-    return True if player_position in foes else False
+    return player_position in foes
