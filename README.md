@@ -12,10 +12,12 @@
   </samp>
 </p>
 
+<br/>
+
 ![projet bomberman](media/projet%20bomberman.png)
 
- # About project -
- ## Goals -
+ # A Propos -
+ ## Objectifs -
 
  <p>
 - Manipuler les variables et les types de données en Python.
@@ -30,13 +32,23 @@
   (niveaux, scores, etc.). 
  </p>
 
-<br/>
+## Architecture -
+
+```php
+├── media/
+│   └── projet bomberman.png
+├── game.py
+├── plate.py
+├── player.py
+└── README.md
+```
 
 ## Use To Code -
 
+![PyCharms](https://img.shields.io/badge/PyCharm-000000?style=for-the-badge&logo=pycharm&logoColor=white)
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
-![VSCode](https://img.shields.io/badge/Visual_Studio-0078d7?style=for-the-badge&logo=visual%20studio&logoColor=white)
 ![Markdown](https://img.shields.io/badge/Markdown-000000?style=for-the-badge&logo=markdown&logoColor=white)
 
-<br/>
+
+
 
