@@ -1,4 +1,4 @@
-def starting_plate(nb_line, nb_column):
+def starting_plate(nb_line, nb_column, bricks):
     plate = []
 
     for i in range(nb_line):
@@ -7,7 +7,14 @@ def starting_plate(nb_line, nb_column):
         else:
             ligne = ["X" if j % 2 != 0 else " " for j in range(nb_column)]
         plate.append(ligne)
+
+    # Ajout des briques au plateau de jeu
+    for (x, y) in bricks:
+        # On vérifie que les coordonnées sont valides
+        if 0 <= x < nb_line and 0 <= y < nb_column:
+            plate[x][y] = "B"
     return plate  # Plateau en 2D
+
 
 def view_plate(plate, player_position, foes):
     for i in range(len(plate)):  # position x
