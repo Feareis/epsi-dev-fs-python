@@ -1,6 +1,5 @@
 <h3 align="center">
-        <samp>&gt; Hey There!, I am
-                <b><a target="_blank" href="#">Fea</a></b>
+        <samp>&gt; Projet Python Bomberman
         </samp>
 </h3>
 
@@ -8,11 +7,12 @@
 <p align="center"> 
   <samp>
     <br>
-    「 <b>EPSI Dev FS</b> Projet Python Bomberman 」
-    <br>
+    「 <b>EPSI Dev FS</b> 」
     <br>
   </samp>
 </p>
+
+![projet bomberman](media/projet%20bomberman.png)
 
  # About project -
  ## Goals -
