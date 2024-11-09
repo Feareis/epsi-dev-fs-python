@@ -9,6 +9,7 @@ bombs = []  # Liste pour stocker les bombes posées avec leur position et heure 
 def add_bomb(position):
     # Ajoute une bombe à la liste avec sa position et l'heure actuelle de pose ((x, y), time)
     bombs.append({"position": position, "time": time.time()})
+    # print(f"Bombe posée à {position}")
 
 
 def update_bombs(screen, game_plate, foes, player_position, nb_line, nb_column):
