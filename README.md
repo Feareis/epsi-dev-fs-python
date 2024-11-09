@@ -37,7 +37,9 @@
 ```php
 ├── media/
 │   └── projet bomberman.png
+├── bomb.py
 ├── game.py
+├── game_settings.py
 ├── plate.py
 ├── player.py
 └── README.md
