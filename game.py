@@ -1,5 +1,6 @@
 import plate
 import player
+import bomb
 import pygame
 import game_settings as gs
 
@@ -18,8 +19,7 @@ pygame.display.set_caption("Bomberman")  # Titre de la fenêtre du jeu
 Paramètres du jeu
 """
 
-nb_line = 13  # Dimensions du plateau de jeu (nombre de lignes)
-nb_column = 13  # Dimensions du plateau de jeu (nombre de colonnes)
+nb_line, nb_column = 13, 13  # Dimensions du plateau de jeu (nombre de lignes et de colonnes)
 foes = [(4, 5), (5, 6), (9, 8), (3, 10)]  # Positions des ennemis sur le plateau
 game_plate = plate.starting_plate(nb_line, nb_column, bricks=[(0, 4), (4, 6), (11, 13), (2, 7), (2, 7)])  # Création du plateau de jeu
 player_position = (0, 0)  # Position initiale du joueur
@@ -43,6 +43,8 @@ while run:
                 player_position = player.move_player(player_position, "q", game_plate)
             elif event.key == pygame.K_d:
                 player_position = player.move_player(player_position, "d", game_plate)
+            elif event.key == pygame.K_b:  # Ajoute une bombe avec la touche "b"
+                bomb.add_bomb(player_position)
 
             if player.check_collision(player_position, foes):  # Vérifie si le joueur entre en collision avec un ennemi
                 print("Perdu !")
@@ -51,6 +53,12 @@ while run:
     # Dessine le plateau et les éléments
     screen.fill(gs.COULEUR_FOND)  # couleurs background
     plate.view_plate(screen, game_plate, player_position, foes)  # Dessine le plateau de jeu et les éléments (joueur, ennemis, murs) à l'écran
+
+    # Met à jour les bombes, gère leur affichage et leur explosion
+    if bomb.update_bombs(screen, game_plate, foes, player_position, nb_line, nb_column):
+        print("Perdu !")
+        run = False
+
     pygame.display.flip()  # Met à jour l'affichage de Pygame pour montrer les éléments récemment dessinés
 
 pygame.quit()  # Quand la boucle de jeu est finie, quitte Pygame
