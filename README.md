@@ -16,6 +16,12 @@
 
 ![projet bomberman](media/projet%20bomberman.png)
 
+## Use To Code -
+
+![PyCharms](https://img.shields.io/badge/PyCharm-000000?style=for-the-badge&logo=pycharm&logoColor=white)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![Markdown](https://img.shields.io/badge/Markdown-000000?style=for-the-badge&logo=markdown&logoColor=white)
+
  # A Propos -
  ## Objectifs -
 
@@ -42,15 +48,25 @@
 ├── game_settings.py
 ├── plate.py
 ├── player.py
-└── README.md
+├── README.md
+└── requirements.txt
 ```
 
-## Use To Code -
+## Installation -
 
-![PyCharms](https://img.shields.io/badge/PyCharm-000000?style=for-the-badge&logo=pycharm&logoColor=white)
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
-![Markdown](https://img.shields.io/badge/Markdown-000000?style=for-the-badge&logo=markdown&logoColor=white)
-
-
-
-
+First, clone the repository on your PC :
+```
+git clone https://github.com/Feareis/epsi-dev-fs-python
+```
+Then move to the location where the repository was cloned :
+```
+cd ./wherever-you-want/epsi-dev-fs-python
+```
+Then install the dependencies :
+```
+pip install -r requirements.txt
+```
+To run the program, simply execute <b>game</b> :
+```
+py game.py
+```
