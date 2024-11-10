@@ -25,7 +25,7 @@ foes = [(4, 5), (5, 6), (9, 8), (3, 10)]  # Positions des ennemis sur le plateau
 game_plate = plate.starting_plate(nb_line, nb_column, bricks=[(0, 4), (4, 6), (11, 13), (2, 7), (2, 7)])  # Création du plateau de jeu
 player_position = (0, 0)  # Position initiale du joueur
 
-score = 1000  # Le joueur commence avec 100 points
+score = 1000  # Le joueur commence avec 1000 points
 dscore = 1
 
 # Délai entre les déplacements des ennemis (ms)
@@ -71,6 +71,10 @@ while run:
     # Dessine le plateau et les éléments
     screen.fill(gs.COULEUR_FOND)  # couleurs background
     plate.view_plate(screen, game_plate, player_position, foes)  # Dessine le plateau de jeu et les éléments (joueur, ennemis, murs) à l'écran
+
+    if not foes:
+        print("Gagné !")  # # Si il n'y a plus d'ennemis, la partie est gagné
+        run = False
 
     # Score
     if score != 0:
