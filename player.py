@@ -1,3 +1,5 @@
+import random
+
 # Haut -> z | Bas -> s | Gauche -> q | Droite -> d
 moves = {
     "z": (-1, 0),
@@ -24,3 +26,17 @@ def move_player(player_position, direction, plate):
 
 def check_collision(player_position, foes):
     return player_position in foes
+
+
+def move_foe(foes_position, plate):
+    x, y = foes_position
+    directions = list(moves.values())
+    random.shuffle(directions)  # Mélange les directions pour rendre le mouvement imprévisible
+    for dx, dy in directions:
+        nx, ny = x + dx, y + dy
+        # On vérifie de ne pas sortir des limites du plateau et qu'on ne va pas sur une case indestructible
+        if 0 <= nx < len(plate) and 0 <= ny < len(plate[0]) and plate[nx][ny] == " ":
+            return nx, ny
+
+    # Si le déplacement est impossible, on reste à la même position
+    return x, y
