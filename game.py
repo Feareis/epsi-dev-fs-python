@@ -3,6 +3,7 @@ import player
 import bomb
 import pygame
 import game_settings as gs
+from game_settings import TAILLE_FENETRE
 import score_db
 
 
@@ -12,7 +13,6 @@ def run_game():
     """
 
     pygame.init()  # Initialisation de la bibliothèque Pygame
-    TAILLE_FENETRE = gs.TAILLE_CASE * 13  # Définition de la taille de la fenêtre (taille plateau de jeu)
     screen = pygame.display.set_mode((TAILLE_FENETRE, TAILLE_FENETRE), pygame.RESIZABLE)
     pygame.display.set_caption("Bomberman")  # Titre de la fenêtre du jeu
 
