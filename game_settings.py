@@ -40,3 +40,9 @@ Windows Size
 """
 
 TAILLE_FENETRE = TAILLE_CASE * 13
+
+
+"""
+Player
+"""
+STARTING_PLAYER_POSITION = (0, 0)

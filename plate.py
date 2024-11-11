@@ -1,4 +1,5 @@
 import pygame
+import random
 import game_settings as gs
 
 
@@ -18,6 +19,39 @@ def starting_plate(nb_line, nb_column, bricks):
         # On vérifie que les coordonnées sont valides
         if 0 <= x < nb_line and 0 <= y < nb_column:
             plate[x][y] = "B"
+    return plate
+
+
+def random_plate(nb_line, nb_column, iratio=None, dratio=None):
+
+    # Ratios aléatoires pour les murs indestructibles et cassables si non fournis
+    iratio = iratio or random.uniform(0, 0.3)
+    dratio = dratio or random.uniform(0, 0.5)
+
+    plate = []
+    for i in range(nb_line):
+        row = []
+        for j in range(nb_column):
+            rand_value = random.random()
+            if rand_value < iratio:
+                row.append("X")  # Mur indestructible
+            elif rand_value < iratio + dratio:
+                row.append("B")  # Brique cassable
+            else:
+                row.append(" ")  # Case vide
+        plate.append(row)
+
+    # Assurer une zone vide autour de la position initiale du joueur
+    x, y = gs.STARTING_PLAYER_POSITION
+    if 0 <= x < nb_line and 0 <= y < nb_column:
+        plate[x][y] = " "  # Position initiale du joueur
+        if y + 1 < nb_column:
+            plate[x][y + 1] = " "
+        if x + 1 < nb_line:
+            plate[x + 1][y] = " "
+        if x + 1 < nb_line and y + 1 < nb_column:
+            plate[x + 1][y + 1] = " "
+
     return plate
 
 

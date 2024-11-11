@@ -3,7 +3,6 @@ import player
 import bomb
 import pygame
 import game_settings as gs
-from game_settings import TAILLE_FENETRE
 import score_db
 
 
@@ -13,6 +12,7 @@ def run_game():
     """
 
     pygame.init()  # Initialisation de la bibliothèque Pygame
+    TAILLE_FENETRE = gs.TAILLE_FENETRE
     screen = pygame.display.set_mode((TAILLE_FENETRE, TAILLE_FENETRE), pygame.RESIZABLE)
     pygame.display.set_caption("Bomberman")  # Titre de la fenêtre du jeu
 
@@ -32,8 +32,9 @@ def run_game():
 
     nb_line, nb_column = 13, 13  # Dimensions du plateau de jeu (nombre de lignes et de colonnes)
     foes = [(4, 5), (5, 6), (9, 8), (3, 10)]  # Positions des ennemis sur le plateau
-    game_plate = plate.starting_plate(nb_line, nb_column, bricks=[(0, 4), (4, 6), (11, 13), (2, 7), (2, 7)])  # Création du plateau de jeu
-    player_position = (0, 0)  # Position initiale du joueur
+    # game_plate = plate.starting_plate(nb_line, nb_column, bricks=[(0, 4), (4, 6), (11, 13), (2, 7), (2, 7)])  # Création du plateau de jeu fixe
+    game_plate = plate.random_plate(nb_line, nb_column)  # Plateau random avec ratio
+    player_position = gs.STARTING_PLAYER_POSITION  # Position initiale du joueur
 
     score = 1000  # Le joueur commence avec 1000 points
     dscore = 1
