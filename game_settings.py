@@ -33,3 +33,10 @@ Case Size
 """
 
 TAILLE_CASE = 40  # Taille des cases du plateau
+
+
+"""
+Windows Size
+"""
+
+TAILLE_FENETRE = TAILLE_CASE * 13

@@ -25,7 +25,7 @@ def save_score(player_name, score):
     conn.close()
 
 
-def get_top_scores(limit=3):
+def get_top_scores(limit=5):
     conn = sqlite3.connect("bomberman_scores.db")  # DB Name
     cursor = conn.cursor()
     cursor.execute('''
