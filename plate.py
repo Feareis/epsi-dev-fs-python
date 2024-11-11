@@ -25,8 +25,8 @@ def starting_plate(nb_line, nb_column, bricks):
 def random_plate(nb_line, nb_column, iratio=None, dratio=None):
 
     # Ratios aléatoires pour les murs indestructibles et cassables si non fournis
-    iratio = iratio or random.uniform(0, 0.3)
-    dratio = dratio or random.uniform(0, 0.5)
+    iratio = iratio or random.uniform(0, 0.2)
+    dratio = dratio or random.uniform(0, 0.4)
 
     plate = []
     for i in range(nb_line):
