@@ -3,6 +3,7 @@ import player
 import bomb
 import pygame
 import game_settings as gs
+import score_db
 
 """
 Initialisation de Pygame
@@ -10,10 +11,19 @@ Initialisation de Pygame
 
 pygame.init()  # Initialisation de la bibliothèque Pygame
 TAILLE_FENETRE = gs.TAILLE_CASE * 13  # Définition de la taille de la fenêtre (taille plateau de jeu)
-screen = pygame.display.set_mode((TAILLE_FENETRE, TAILLE_FENETRE))
+SCREEN_WIDTH = 960
+SCREEN_HEIGHT = 540
+screen = pygame.display.set_mode((TAILLE_FENETRE, TAILLE_FENETRE), pygame.RESIZABLE)
 pygame.display.set_caption("Bomberman")  # Titre de la fenêtre du jeu
 
 font = pygame.font.Font(None, 36)  # Définir la police d'affichage pour le score
+
+
+"""
+Initialisation de Pygame
+"""
+
+score_db.initialize_db()
 
 
 """
@@ -74,6 +84,7 @@ while run:
 
     if not foes:
         print("Gagné !")  # # Si il n'y a plus d'ennemis, la partie est gagné
+        score_db.game_end(score)
         run = False
 
     # Score
