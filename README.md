@@ -44,10 +44,13 @@
 ├── media/
 │   └── projet bomberman.png
 ├── bomb.py
+├── bomberman_scores.db
 ├── game.py
 ├── game_settings.py
+├── menu.py
 ├── plate.py
 ├── player.py
+├── score_db.py
 ├── README.md
 └── requirements.txt
 ```
