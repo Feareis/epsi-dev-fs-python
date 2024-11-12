@@ -71,5 +71,5 @@ pip install -r requirements.txt
 ```
 To run the program, simply execute <b>game</b> :
 ```
-py game.py
+py menu.py
 ```
