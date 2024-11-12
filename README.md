@@ -72,7 +72,7 @@ Then install the dependencies :
 ```
 pip install -r requirements.txt
 ```
-To run the program, simply execute <b>game</b> :
+To run the program, simply execute <b>Menu</b> :
 ```
 py menu.py
 ```
