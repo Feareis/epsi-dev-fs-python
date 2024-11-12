@@ -8,7 +8,7 @@ import db
 from menu import draw_menu
 
 
-def run_game():
+def run_game(load_saved=False):
     pygame.init()  # Initialisation de la bibliothèque Pygame
 
 
@@ -31,18 +31,23 @@ def run_game():
     """
     Paramètres du jeu
     """
-    nb_line, nb_column = 13, 13  # Dimensions du plateau de jeu (nombre de lignes et de colonnes)
-    foes = [(4, 5), (5, 6), (9, 8), (3, 10)]  # Positions des ennemis sur le plateau
-    # game_plate = plate.starting_plate(nb_line, nb_column, bricks=[(0, 4), (4, 6), (11, 13), (2, 7), (2, 7)])  # Création du plateau de jeu fixe
-    game_plate = plate.random_plate(nb_line, nb_column)  # Plateau random avec ratio
-    player_position = gs.STARTING_PLAYER_POSITION  # Position initiale du joueur
+    if load_saved:
+        loaded_game = db.load_game()
+        if loaded_game:
+            player_position, foes, score, nb_line, nb_column, game_plate = loaded_game
+        else:
+            return
+    else:
+        nb_line, nb_column = 13, 13  # Dimensions du plateau de jeu (nombre de lignes et de colonnes)
+        foes = [(4, 5), (5, 6), (9, 8), (3, 10)]  # Positions des ennemis sur le plateau
+        # game_plate = plate.starting_plate(nb_line, nb_column, bricks=[(0, 4), (4, 6), (11, 13), (2, 7), (2, 7)])  # Création du plateau de jeu fixe
+        game_plate = plate.random_plate(nb_line, nb_column)  # Plateau random avec ratio
+        player_position = gs.STARTING_PLAYER_POSITION  # Position initiale du joueur
+        score = 1000  # Le joueur commence avec 1000 points
 
-    score = 1000  # Le joueur commence avec 1000 points
-    dscore = 1
-
-    # Délai entre les déplacements des ennemis (ms)
-    foes_move_delay = 1000
-    last_foe_move_time = pygame.time.get_ticks()
+    dscore = 1  # décrémentation de score
+    foes_move_delay = 1000  # Délai entre les déplacements des ennemis (ms)
+    last_foe_move_time = pygame.time.get_ticks()  # Initialisation du tick de deplacement (temps écoulé depuis le dernier mouvement)
 
 
     """
@@ -59,7 +64,8 @@ def run_game():
                     if choice == "Reprendre":
                         continue
                     elif choice == "Sauvegarder la partie":
-                        print("Partie sauvegardée.")
+                        db.save_game(player_position, foes, score, nb_line, nb_column, game_plate)
+                        run = False
                     elif choice == "Options":
                         print("Options")
                     elif choice == "Menu principal":

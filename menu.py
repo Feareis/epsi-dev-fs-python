@@ -31,7 +31,7 @@ def draw_menu(title, options, transparent=False):
     selected_option = 0
     if transparent:
         overlay = pygame.Surface((TAILLE_FENETRE, TAILLE_FENETRE))
-        overlay.set_alpha(150)  # Définir la transparence (0 = totalement transparent, 255 = opaque)
+        overlay.set_alpha(150)  # Transparence (0 (r) -> 255 (opaque))
         overlay.fill((0, 0, 0))  # Couleur de fond du menu semi-transparent
     while True:
         screen.fill(WHITE)
@@ -94,7 +94,7 @@ def main_menu():
         if choice == "Nouvelle Partie":
             game.run_game()  # Crée une nouvelle partie
         elif choice == "Charger une partie":
-            game.run_game()  # Charge une partie
+            game.run_game(load_saved=True)  # Charge une partie
         elif choice == "Meilleurs Scores":
             show_scores()  # Affiche les scores
         elif choice == "Options":
