@@ -50,7 +50,7 @@
 ├── menu.py
 ├── plate.py
 ├── player.py
-├── score_db.py
+├── db.py
 ├── README.md
 └── requirements.txt
 ```

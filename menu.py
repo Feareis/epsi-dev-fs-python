@@ -1,7 +1,7 @@
 import pygame
 import sys
 import game
-import score_db
+import db
 import game_settings as gs
 from game_settings import TAILLE_FENETRE
 
@@ -26,52 +26,32 @@ BLACK = gs.BLACK
 SELECTED = gs.BLUE
 font = pygame.font.Font(None, 36)
 
-# Options de menu
-options = ["Nouvelle Partie", "Meilleurs Scores", "Options", "Quitter"]
-selected_option = 0  # Option actuellement sélectionnée
 
-def draw_menu():
-    screen.fill(WHITE)
-    title = font.render("Menu", True, BLACK)
-    screen.blit(title, (TAILLE_FENETRE // 2 - title.get_width() // 2, 50))
+def draw_menu(title, options, transparent=False):
+    selected_option = 0
+    if transparent:
+        overlay = pygame.Surface((TAILLE_FENETRE, TAILLE_FENETRE))
+        overlay.set_alpha(150)  # Définir la transparence (0 = totalement transparent, 255 = opaque)
+        overlay.fill((0, 0, 0))  # Couleur de fond du menu semi-transparent
+    while True:
+        screen.fill(WHITE)
 
-    for i, option in enumerate(options):
-        color = SELECTED if i == selected_option else BLACK
-        option_text = font.render(option, True, color)
-        screen.blit(option_text, (TAILLE_FENETRE // 2 - option_text.get_width() // 2, 150 + i * 40))
+        # Afficher le titre du menu
+        title_text = font.render(title, True, BLACK)
+        screen.blit(title_text, (TAILLE_FENETRE // 2 - title_text.get_width() // 2, 50))
 
-    pygame.display.flip()
+        # Afficher chaque option
+        for i, option in enumerate(options):
+            if i == selected_option:
+                color = SELECTED
+            else:
+                color = BLACK
+            option_text = font.render(option, True, color)
+            screen.blit(option_text, (TAILLE_FENETRE // 2 - option_text.get_width() // 2, 150 + i * 40))
 
-def show_scores():
-    screen.fill(WHITE)
-    title = font.render("Meilleurs Scores", True, BLACK)
-    screen.blit(title, (TAILLE_FENETRE // 2 - title.get_width() // 2, 50))
+        pygame.display.flip()
 
-    # Affiche les meilleurs scores depuis la base de données
-    top_scores = score_db.get_top_scores()
-    for i, (name, score) in enumerate(top_scores, start=1):
-        score_text = font.render(f"{i}. {name} - {score} points", True, BLACK)
-        screen.blit(score_text, (TAILLE_FENETRE // 2 - score_text.get_width() // 2, 100 + i * 30))
-
-    pygame.display.flip()
-
-    # Attend un appui sur une touche pour revenir au menu principal
-    waiting = True
-    while waiting:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                waiting = False  # Quitte l'affichage des scores si une touche est pressée
-
-def main_menu():
-    global selected_option
-    running = True
-
-    while running:
-        draw_menu()
-
+        # Gestion des événements
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -82,13 +62,52 @@ def main_menu():
                 elif event.key == pygame.K_DOWN:
                     selected_option = (selected_option + 1) % len(options)
                 elif event.key == pygame.K_RETURN:
-                    if options[selected_option] == "Nouvelle Partie":
-                        game.run_game()  # Lance le jeu en appelant une fonction run_game dans game.py
-                    elif options[selected_option] == "Meilleurs Scores":
-                        show_scores()  # Affiche les meilleurs scores
-                    elif options[selected_option] == "Quitter":
-                        pygame.quit()
-                        sys.exit()
+                    return options[selected_option]  # Retourne l'option sélectionnée
+
+def show_scores():
+    screen.fill(WHITE)
+    title = font.render("- Meilleurs Scores -", True, BLACK)
+    screen.blit(title, (TAILLE_FENETRE // 2 - title.get_width() // 2, 50))
+
+    # Affiche les meilleurs scores depuis la base de données
+    top_scores = db.get_top_scores()
+    for i, (name, score) in enumerate(top_scores, start=1):
+        score_text = font.render(f"{i}. {name} - {score} points", True, BLACK)
+        screen.blit(score_text, (TAILLE_FENETRE // 2 - score_text.get_width() // 2, 100 + i * 30))
+
+    pygame.display.flip()
+
+    # appui sur une touche pour revenir au menu
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                waiting = False  # Quitte l'affichage des scores si une touche est pressée
+
+def main_menu():
+    options = ["Nouvelle Partie", "Charger une partie", "Meilleurs Scores", "Options", "Quitter"]
+    while True:
+        choice = draw_menu("- Menu -", options)
+        if choice == "Nouvelle Partie":
+            game.run_game()  # Crée une nouvelle partie
+        elif choice == "Charger une partie":
+            game.run_game()  # Charge une partie
+        elif choice == "Meilleurs Scores":
+            show_scores()  # Affiche les scores
+        elif choice == "Options":
+            print("Options")  # Affiche les options
+        elif choice == "Quitter":
+            pygame.quit()  # Ferme la fenêtre
+            sys.exit()
+
+
+def pause_menu():
+    options = ["Reprendre", "Sauvegarder la partie", "Options", "Menu principal"]
+    return draw_menu("- Pause -", options, transparent=True)
+
 
 if __name__ == "__main__":
     main_menu()

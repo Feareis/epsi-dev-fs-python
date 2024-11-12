@@ -1,35 +1,36 @@
+import menu
 import plate
 import player
 import bomb
 import pygame
 import game_settings as gs
-import score_db
+import db
+from menu import draw_menu
 
 
 def run_game():
-    """
-    Initialisation de Pygame
-    """
-
     pygame.init()  # Initialisation de la bibliothèque Pygame
+
+
+    """
+    Initialisation des paramètres de la fenêtres
+    """
     TAILLE_FENETRE = gs.TAILLE_FENETRE
     screen = pygame.display.set_mode((TAILLE_FENETRE, TAILLE_FENETRE), pygame.RESIZABLE)
     pygame.display.set_caption("Bomberman")  # Titre de la fenêtre du jeu
-
     font = pygame.font.Font(None, 36)  # Définir la police d'affichage pour le score
 
 
     """
-    Initialisation de Pygame
+    Initialisation des db
     """
-
-    score_db.initialize_db()
+    db.initialize_scores_db()
+    db.initialize_game_db()
 
 
     """
     Paramètres du jeu
     """
-
     nb_line, nb_column = 13, 13  # Dimensions du plateau de jeu (nombre de lignes et de colonnes)
     foes = [(4, 5), (5, 6), (9, 8), (3, 10)]  # Positions des ennemis sur le plateau
     # game_plate = plate.starting_plate(nb_line, nb_column, bricks=[(0, 4), (4, 6), (11, 13), (2, 7), (2, 7)])  # Création du plateau de jeu fixe
@@ -47,14 +48,24 @@ def run_game():
     """
     Boucle de jeu
     """
-
     run = True
     while run:
         for event in pygame.event.get():  # Gestion des événements de Pygame (fermeture de la fenêtre et appui sur les touches)
             if event.type == pygame.QUIT:
                 run = False  # Quitte la boucle si l'événement de fermeture est détecté
             elif event.type == pygame.KEYDOWN:  # Gestion des mouvements du joueur en fonction de la touche appuyée
-                if event.key == pygame.K_z:
+                if event.key == pygame.K_ESCAPE:
+                    choice = menu.pause_menu()
+                    if choice == "Reprendre":
+                        continue
+                    elif choice == "Sauvegarder la partie":
+                        print("Partie sauvegardée.")
+                    elif choice == "Options":
+                        print("Options")
+                    elif choice == "Menu principal":
+                        run = False  # Quitte la partie pour revenir au menu principal sans sauvegarde
+
+                elif event.key == pygame.K_z:
                     player_position = player.move_player(player_position, "z", game_plate)
                     score -= dscore
                 elif event.key == pygame.K_s:
@@ -89,7 +100,7 @@ def run_game():
 
         if not foes:
             print("Gagné !")  # # Si il n'y a plus d'ennemis, la partie est gagné
-            score_db.game_end(score)
+            db.game_end(score)
             run = False
 
         # Score
