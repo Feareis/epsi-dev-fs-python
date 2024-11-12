@@ -69,15 +69,19 @@ def run_game():
                 elif event.key == pygame.K_b:  # Ajoute une bombe avec la touche "b"
                     bomb.add_bomb(player_position)
 
-                if player.check_collision(player_position, foes):  # Vérifie si le joueur entre en collision avec un ennemi
-                    print("Perdu !")
-                    run = False
+        if player.check_player_collision(player_position, foes):  # Vérifie si le joueur entre en collision avec un ennemi ou l'inverse
+            print("Perdu !")
+            run = False
 
         # Vérifie si le délai de déplacement des ennemis est écoulé
         ct = pygame.time.get_ticks()
         if ct - last_foe_move_time > foes_move_delay:  # si (temps actuel - dernier mouvement > delai de mouvement enemi)
             foes = [player.move_foe(player_position, foe, game_plate) for foe in foes]  # Met à jour toute les positions ennemis
             last_foe_move_time = ct  # Met à jour le dernier moment de déplacement des ennemis
+
+            if player.check_player_collision(player_position, foes):  # Vérifie si le joueur entre en collision avec un ennemi ou l'inverse
+                print("Perdu !")
+                run = False
 
         # Dessine le plateau et les éléments
         screen.fill(gs.COULEUR_FOND)  # couleurs background
