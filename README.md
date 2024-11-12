@@ -41,16 +41,19 @@
 ## Architecture -
 
 ```php
+├── db/
+│   └── scores.db
+│   └── game.db
 ├── media/
 │   └── projet bomberman.png
 ├── bomb.py
 ├── bomberman_scores.db
+├── db.py
 ├── game.py
 ├── game_settings.py
 ├── menu.py
 ├── plate.py
 ├── player.py
-├── db.py
 ├── README.md
 └── requirements.txt
 ```
