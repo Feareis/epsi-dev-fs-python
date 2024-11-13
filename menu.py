@@ -23,7 +23,6 @@ Configuration des couleurs et fonts
 '''
 WHITE = gs.WHITE
 BLACK = gs.BLACK
-SELECTED = gs.BLUE
 font = pygame.font.Font(None, 36)
 
 
@@ -41,7 +40,7 @@ def draw_menu(title, options):
             if option == " ":
                 continue  # Ignore une option vide " "
             if i == selected_option:
-                color = SELECTED
+                color = gs.SELECTED
             else:
                 color = BLACK
             option_text = font.render(option, True, color)

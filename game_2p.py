@@ -31,7 +31,7 @@ def run_game_2p(load_saved=False):
     Paramètres du jeu
     """
     nb_line, nb_column = 13, 13  # Dimensions du plateau de jeu (nombre de lignes et de colonnes)
-    foes = [(4, 5), (5, 6), (9, 8), (3, 10)]  # Positions des ennemis sur le plateau
+    foes = gs.INITIAL_FOES_POSITIONS  # Positions des ennemis sur le plateau
     # game_plate = plate.starting_plate(nb_line, nb_column, bricks=[(0, 4), (4, 6), (11, 13), (2, 7), (2, 7)])  # Création du plateau de jeu fixe
     game_plate = plate.random_plate(nb_line, nb_column)  # Plateau random avec ratio
     player1_position = gs.STARTING_PLAYER1_POSITION  # Position initiale du joueur 1
@@ -79,16 +79,16 @@ def run_game_2p(load_saved=False):
 
                 # Contrôles pour le Joueur 2
                 if event.key == pygame.K_o:
-                    player2_position = player.move_player(player1_position, "o", game_plate)
+                    player2_position = player.move_player(player1_position, "o", game_plate, 2)
                     score_j2 -= dscore
                 elif event.key == pygame.K_l:
-                    player2_position = player.move_player(player1_position, "l", game_plate)
+                    player2_position = player.move_player(player1_position, "l", game_plate, 2)
                     score_j2 -= dscore
                 elif event.key == pygame.K_k:
-                    player2_position = player.move_player(player1_position, "k", game_plate)
+                    player2_position = player.move_player(player1_position, "k", game_plate, 2)
                     score_j2 -= dscore
                 elif event.key == pygame.K_m:
-                    player2_position = player.move_player(player1_position, "m", game_plate)
+                    player2_position = player.move_player(player1_position, "m", game_plate, 2)
                     score_j2 -= dscore
                 elif event.key == pygame.K_i:
                     bomb.add_bomb(player2_position)
@@ -121,8 +121,7 @@ def run_game_2p(load_saved=False):
 
         # Dessine le plateau et les éléments
         screen.fill(gs.COULEUR_FOND)  # couleurs background
-        plate.view_plate(screen, game_plate, player1_position, foes)  # Dessine le plateau de jeu et les éléments (joueur, ennemis, murs) à l'écran
-        plate.view_plate(screen, game_plate, player2_position, foes)  # Dessine le plateau de jeu et les éléments (joueur, ennemis, murs) à l'écran
+        plate.view_plate(screen, game_plate, player1_position, foes, player2_position)  # Dessine le plateau de jeu et les éléments (joueur, ennemis, murs) à l'écran
 
         if not foes:
             print("Gagné !")  # Si il n'y a plus d'ennemis, la partie est gagné

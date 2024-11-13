@@ -1,17 +1,29 @@
 import random
 import math
 
-# Haut -> z | Bas -> s | Gauche -> q | Droite -> d
-moves = {
+
+move = {
+    # Joueur 1 : Haut -> z | Bas -> s | Gauche -> q | Droite -> d
     "z": (-1, 0),
     "s": (1, 0),
     "q": (0, -1),
-    "d": (0, 1)
+    "d": (0, 1),
 }
 
-def move_player(player_position, direction, plate):
+moves_p2 = {
+    # Joueur 2 : Haut -> o | Bas -> l | Gauche -> k | Droite -> m
+    "o": (-1, 0),
+    "l": (1, 0),
+    "k": (0, -1),
+    "m": (0, 1),
+}
+
+def move_player(player_position, direction, plate, player_number=None):
 
     x, y = player_position
+
+    # Choisir le dictionnaire de mouvements en fonction du joueur
+    moves = move if player_number is None else moves_p2
 
     # Si la direction est correcte, on additionne les coordonnées de mouvement à la position actuelle du joueur
     if direction in moves:
@@ -55,7 +67,7 @@ def move_foe(player_position, foe_position, plate):
                 return nx, ny
 
     # Sinon l'ennemi se déplace normalement et aléatoirement
-    directions = list(moves.values())
+    directions = list(move.values())
     random.shuffle(directions)  # Mélange les directions pour rendre le mouvement imprévisible
     for dx, dy in directions:
         nx, ny = fx + dx, fy + dy

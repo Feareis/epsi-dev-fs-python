@@ -25,12 +25,14 @@ COULEUR_ENNEMI = RED
 COULEUR_FOND = WHITE
 COULEUR_BOMB = YELLOW
 
+# Menu
+SELECTED = BLUE
 
 
 """
 Case Size
 """
-TAILLE_CASE = 40  # Taille des cases du plateau
+TAILLE_CASE = 45  # Taille des cases du plateau
 
 
 """
@@ -40,7 +42,8 @@ TAILLE_FENETRE = TAILLE_CASE * 13
 
 
 """
-Player
+Position
 """
+INITIAL_FOES_POSITIONS = [(4, 5), (5, 6), (9, 8), (3, 10)]
 STARTING_PLAYER1_POSITION = (0, 0)
-STARTING_PLAYER2_POSITION = (13, 13)
+STARTING_PLAYER2_POSITION = (12, 12)

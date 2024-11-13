@@ -38,7 +38,7 @@ def run_game(load_saved=False):
             return
     else:
         nb_line, nb_column = 13, 13  # Dimensions du plateau de jeu (nombre de lignes et de colonnes)
-        foes = [(4, 5), (5, 6), (9, 8), (3, 10)]  # Positions des ennemis sur le plateau
+        foes = gs.INITIAL_FOES_POSITIONS  # Positions des ennemis sur le plateau
         # game_plate = plate.starting_plate(nb_line, nb_column, bricks=[(0, 4), (4, 6), (11, 13), (2, 7), (2, 7)])  # Création du plateau de jeu fixe
         game_plate = plate.random_plate(nb_line, nb_column)  # Plateau random avec ratio
         player_position = gs.STARTING_PLAYER1_POSITION  # Position initiale du joueur
