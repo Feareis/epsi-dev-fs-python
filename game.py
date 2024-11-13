@@ -5,7 +5,6 @@ import bomb
 import pygame
 import game_settings as gs
 import db
-from menu import draw_menu
 
 
 def run_game(load_saved=False):
@@ -42,8 +41,8 @@ def run_game(load_saved=False):
         foes = [(4, 5), (5, 6), (9, 8), (3, 10)]  # Positions des ennemis sur le plateau
         # game_plate = plate.starting_plate(nb_line, nb_column, bricks=[(0, 4), (4, 6), (11, 13), (2, 7), (2, 7)])  # Création du plateau de jeu fixe
         game_plate = plate.random_plate(nb_line, nb_column)  # Plateau random avec ratio
-        player_position = gs.STARTING_PLAYER_POSITION  # Position initiale du joueur
-        score = 1000  # Le joueur commence avec 1000 points
+        player_position = gs.STARTING_PLAYER1_POSITION  # Position initiale du joueur
+        score = 1000  # Le joueur 1 commence avec 1000 points
 
     dscore = 1  # décrémentation de score
     foes_move_delay = 1000  # Délai entre les déplacements des ennemis (ms)
