@@ -14,8 +14,7 @@ def run_game(load_saved=False):
     """
     Initialisation des paramètres de la fenêtres
     """
-    TAILLE_FENETRE = gs.TAILLE_FENETRE
-    screen = pygame.display.set_mode((TAILLE_FENETRE, TAILLE_FENETRE), pygame.RESIZABLE)
+    screen = pygame.display.set_mode((gs.TAILLE_FENETRE, gs.TAILLE_FENETRE), pygame.RESIZABLE)
     pygame.display.set_caption("Bomberman")  # Titre de la fenêtre du jeu
     font = pygame.font.Font(None, 36)  # Définir la police d'affichage pour le score
 

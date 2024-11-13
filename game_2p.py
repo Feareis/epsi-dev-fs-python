@@ -7,7 +7,7 @@ import game_settings as gs
 import db
 
 
-def run_game_2p(load_saved=False):
+def run_game_2p():
     pygame.init()  # Initialisation de la bibliothèque Pygame
 
 
@@ -16,7 +16,7 @@ def run_game_2p(load_saved=False):
     """
     screen = pygame.display.set_mode((gs.TAILLE_FENETRE, gs.TAILLE_FENETRE), pygame.RESIZABLE)
     pygame.display.set_caption("Bomberman")  # Titre de la fenêtre du jeu
-    font = pygame.font.Font(None, 36)  # Définir la police d'affichage pour le score
+    # font = pygame.font.Font(None, 36)  # Définir la police d'affichage pour le score
 
 
     """
