@@ -38,6 +38,8 @@ def draw_menu(title, options):
 
         # Afficher chaque option
         for i, option in enumerate(options):
+            if option == " ":
+                continue  # Ignore une option vide " "
             if i == selected_option:
                 color = SELECTED
             else:
@@ -55,14 +57,18 @@ def draw_menu(title, options):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     selected_option = (selected_option - 1) % len(options)
+                    while options[selected_option] == " ":
+                        selected_option = (selected_option - 1) % len(options)
                 elif event.key == pygame.K_DOWN:
                     selected_option = (selected_option + 1) % len(options)
+                    while options[selected_option] == " ":
+                        selected_option = (selected_option + 1) % len(options)
                 elif event.key == pygame.K_RETURN:
                     return options[selected_option]  # Retourne l'option sélectionnée
 
 def show_scores():
     screen.fill(WHITE)
-    title = font.render("- Meilleurs Scores -", True, BLACK)
+    title = font.render("- Meilleurs Scores (Solo uniquement) -", True, BLACK)
     screen.blit(title, (gs.TAILLE_FENETRE // 2 - title.get_width() // 2, 50))
 
     # Affiche les meilleurs scores depuis la base de données
@@ -84,61 +90,59 @@ def show_scores():
                 waiting = False  # Quitte l'affichage des scores si une touche est pressée
 
 def main_menu():
-    options = ["Nouvelle Partie", "Meilleurs Scores", "Options", "Quitter"]
+    options = ["Nouvelle Partie", "Charger une partie", "Meilleurs Scores", "Options", " ", "Quitter"]
     while True:
         choice = draw_menu("- Menu -", options)
         if choice == "Nouvelle Partie":
             new_game_menu()  # Envoie vers le menu nouvelle partie
+        elif choice == "Charger une partie":
+            load_game_menu()  # Affiche le menu de restauration d'une partie solo
         elif choice == "Meilleurs Scores":
             show_scores()  # Affiche les scores
         elif choice == "Options":
-            print("Options")  # Affiche les options
+            options_menu()  # Affiche les options (non utilisable)
         elif choice == "Quitter":
             pygame.quit()  # Ferme la fenêtre
             sys.exit()
 
 
 def pause_menu():
-    options = ["Reprendre", "Sauvegarder la partie", "Options", "Menu principal"]
+    options = ["Reprendre", "Sauvegarder la partie", "Options", " ", "Menu principal"]
     return draw_menu("- Pause -", options)
 
 
 def pause_2p_menu():
-    options = ["Reprendre", "Options", "Menu principal"]
+    options = ["Reprendre", "Options", " ", "Menu principal"]
     return draw_menu("- Pause -", options)
 
 
 def new_game_menu():
-    options = ["Solo", "Multi", "Options", "Menu principale"]
+    options = ["Solo", "Multi", " ", "Menu principale"]
     choice = draw_menu("- Nouvelle Partie -", options)
     if choice == "Solo":
         game.run_game()
     elif choice == "Multi":
         game_2p.run_game_2p()  # Utilise le module multi-joueur
-    elif choice == "Options":
-        options_menu()  # Affiche les options (non utilisable)
     elif choice == "Menu principale":
         return  # Retourne au menu principal sans action supplémentaire
 
 def load_game_menu():
-    options = ["Charger une partie - Solo", "Charger une partie - Multi", "Retour", "Menu principale"]
-    choice = draw_menu("- harger une partie -", options)
+    options = ["Charger une partie - Solo", " ", "Menu principale"]
+    choice = draw_menu("- Charger une partie -", options)
 
     if choice == "Charger une partie - Solo":
         game.run_game(load_saved=True)
-    elif choice == "Retour":
-        new_game_menu()  # Retourne au menu précédent
     elif choice == "Menu principale":
         return  # Retourne au menu principal sans faire d'actions supplémentaires
 
 
 def options_menu():
-    options = ["Langues", "Keybinds", "Menu principale"]
+    options = ["Langues", "Keybinds", " ", "Menu principale"]
     choice = draw_menu("- Options -", options)
 
     if choice == "Langues":
         print("Langue")
-    elif choice == "Keybinds":
+    elif choice == "Touche":
         print("Keybinds")
     elif choice == "Menu principale":
         return  # Retourne au menu principal sans faire d'actions supplémentaires
