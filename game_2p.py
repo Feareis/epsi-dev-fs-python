@@ -78,19 +78,19 @@ def run_game_2p(load_saved=False):
                     bomb.add_bomb(player1_position)
 
                 # Contrôles pour le Joueur 2
-                if event.key == pygame.K_z:
-                    player2_position = player.move_player(player1_position, "z", game_plate)
+                if event.key == pygame.K_o:
+                    player2_position = player.move_player(player1_position, "o", game_plate)
                     score_j2 -= dscore
-                elif event.key == pygame.K_s:
-                    player2_position = player.move_player(player1_position, "s", game_plate)
+                elif event.key == pygame.K_l:
+                    player2_position = player.move_player(player1_position, "l", game_plate)
                     score_j2 -= dscore
-                elif event.key == pygame.K_q:
-                    player2_position = player.move_player(player1_position, "q", game_plate)
+                elif event.key == pygame.K_k:
+                    player2_position = player.move_player(player1_position, "k", game_plate)
                     score_j2 -= dscore
-                elif event.key == pygame.K_d:
-                    player2_position = player.move_player(player1_position, "d", game_plate)
+                elif event.key == pygame.K_m:
+                    player2_position = player.move_player(player1_position, "m", game_plate)
                     score_j2 -= dscore
-                elif event.key == pygame.K_e:
+                elif event.key == pygame.K_i:
                     bomb.add_bomb(player2_position)
 
         if player.check_player_collision(player1_position, foes) and not foes:  # Vérifie si le joueur 1 entre en collision avec un ennemi ou l'inverse
@@ -122,9 +122,10 @@ def run_game_2p(load_saved=False):
         # Dessine le plateau et les éléments
         screen.fill(gs.COULEUR_FOND)  # couleurs background
         plate.view_plate(screen, game_plate, player1_position, foes)  # Dessine le plateau de jeu et les éléments (joueur, ennemis, murs) à l'écran
+        plate.view_plate(screen, game_plate, player2_position, foes)  # Dessine le plateau de jeu et les éléments (joueur, ennemis, murs) à l'écran
 
         if not foes:
-            print("Gagné !")  # # Si il n'y a plus d'ennemis, la partie est gagné
+            print("Gagné !")  # Si il n'y a plus d'ennemis, la partie est gagné
             run = False
 
         # Met à jour les bombes, gère leur affichage et leur explosion
