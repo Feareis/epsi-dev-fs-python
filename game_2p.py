@@ -60,47 +60,42 @@ def run_game_2p():
                     elif choice == "Menu principal":
                         run = False  # Quitte la partie pour revenir au menu principal sans sauvegarde
 
-                # Contrôles pour le Joueur 1
-                if event.key == pygame.K_z:
+                keys = pygame.key.get_pressed()
+
+                # Déplacements du Joueur 1
+                if keys[pygame.K_z]:
                     player1_position = player.move_player(player1_position, "z", game_plate)
                     score_j1 -= dscore
-                elif event.key == pygame.K_s:
+                elif keys[pygame.K_s]:
                     player1_position = player.move_player(player1_position, "s", game_plate)
                     score_j1 -= dscore
-                elif event.key == pygame.K_q:
+                elif keys[pygame.K_q]:
                     player1_position = player.move_player(player1_position, "q", game_plate)
                     score_j1 -= dscore
-                elif event.key == pygame.K_d:
+                elif keys[pygame.K_d]:
                     player1_position = player.move_player(player1_position, "d", game_plate)
                     score_j1 -= dscore
-                elif event.key == pygame.K_e:
+                if keys[pygame.K_e]:
                     bomb.add_bomb(player1_position)
 
-                # Contrôles pour le Joueur 2
-                if event.key == pygame.K_o:
-                    player2_position = player.move_player(player1_position, "o", game_plate, 2)
+                # Déplacements du Joueur 2
+                if keys[pygame.K_o]:
+                    player2_position = player.move_player(player2_position, "o", game_plate, 2)
                     score_j2 -= dscore
-                elif event.key == pygame.K_l:
-                    player2_position = player.move_player(player1_position, "l", game_plate, 2)
+                elif keys[pygame.K_l]:
+                    player2_position = player.move_player(player2_position, "l", game_plate, 2)
                     score_j2 -= dscore
-                elif event.key == pygame.K_k:
-                    player2_position = player.move_player(player1_position, "k", game_plate, 2)
+                elif keys[pygame.K_k]:
+                    player2_position = player.move_player(player2_position, "k", game_plate, 2)
                     score_j2 -= dscore
-                elif event.key == pygame.K_m:
-                    player2_position = player.move_player(player1_position, "m", game_plate, 2)
+                elif keys[pygame.K_m]:
+                    player2_position = player.move_player(player2_position, "m", game_plate, 2)
                     score_j2 -= dscore
-                elif event.key == pygame.K_i:
+                if keys[pygame.K_i]:
                     bomb.add_bomb(player2_position)
 
-        if player.check_player_collision(player1_position, foes) and not foes:  # Vérifie si le joueur 1 entre en collision avec un ennemi ou l'inverse
-            print("Victoire du joueur 2 !")
-            run = False
-        elif player.check_player_collision(player2_position, foes) and not foes:  # Vérifie si le joueur 2 entre en collision avec un ennemi ou l'inverse
-            print("Victoire du joueur 1 !")
-            run = False
-        elif player.check_player_collision(player2_position, foes) and player.check_player_collision(player1_position, foes):  # Vérifie si les 2 joueurs sont éliminés
-            print("Perdu !! Joueur 1 et 2 éliminés !")
-            run = False
+        # vérification des collision j/j - e/j
+        player.check_player_collision_2p(player1_position, player2_position, foes)
 
         # Vérifie si le délai de déplacement des ennemis est écoulé
         ct = pygame.time.get_ticks()
@@ -108,15 +103,8 @@ def run_game_2p():
             foes = [player.move_foe(player1_position, foe, game_plate) for foe in foes]  # Met à jour toute les positions ennemis
             last_foe_move_time = ct  # Met à jour le dernier moment de déplacement des ennemis
 
-            if player.check_player_collision(player1_position, foes) and not foes:  # Vérifie si le joueur 1 entre en collision avec un ennemi ou l'inverse
-                print("Victoire du joueur 2 !")
-                run = False
-            elif player.check_player_collision(player2_position, foes) and not foes:  # Vérifie si le joueur 2 entre en collision avec un ennemi ou l'inverse
-                print("Victoire du joueur 1 !")
-                run = False
-            elif player.check_player_collision(player2_position, foes) and player.check_player_collision(player1_position, foes):  # Vérifie si le joueur 1 et 2 sont tous les 2 éliminés
-                print("Perdu")
-                run = False
+            # vérification des collision j/j - e/j
+            player.check_player_collision_2p(player1_position, player2_position, foes)
 
         # Dessine le plateau et les éléments
         screen.fill(gs.COULEUR_FOND)  # couleurs background

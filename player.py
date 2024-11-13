@@ -18,19 +18,22 @@ moves_p2 = {
     "m": (0, 1),
 }
 
-def move_player(player_position, direction, plate, player_number=None):
+def move_player(player_position, direction, plate, player_number=None, player2_position=None):
 
     x, y = player_position
 
     # Choisir le dictionnaire de mouvements en fonction du joueur
-    moves = move if player_number is None else moves_p2
+    if player_number is None:
+        moves = move
+    else:
+        moves = moves_p2
 
     # Si la direction est correcte, on additionne les coordonnées de mouvement à la position actuelle du joueur
     if direction in moves:
         dx, dy = moves[direction]
         nx, ny = x + dx, y + dy
         # On vérifie de ne pas sortir des limites du plateau et qu'on ne va pas sur une case indestructible
-        if 0 <= nx < len(plate) and 0 <= ny < len(plate[0]) and plate[nx][ny] == " ":
+        if 0 <= nx < len(plate) and 0 <= ny < len(plate[0]) and plate[nx][ny] == " " and (nx, ny) != player2_position:
             return nx, ny
 
     # Si le déplacement est impossible, on reste à la même position
@@ -39,6 +42,18 @@ def move_player(player_position, direction, plate, player_number=None):
 
 def check_player_collision(player_position, foes):
     return player_position in foes
+
+
+def check_player_collision_2p(player1_position, player2_position, foes):
+    run = True
+    if check_player_collision(player1_position, foes):  # Vérifie si le joueur 1 entre en collision avec un ennemi ou l'inverse
+        print("Le joueur 1 est mort.")
+    elif check_player_collision(player2_position, foes):  # Vérifie si le joueur 2 entre en collision avec un ennemi ou l'inverse
+        print("Le joueur 2 est mort.")
+    elif check_player_collision(player2_position, foes) and check_player_collision(player1_position, foes):  # Vérifie si les 2 joueurs sont éliminés
+        print("Perdu !! Joueur 1 et 2 éliminés !")
+        run = False
+    return run
 
 
 def move_foe(player_position, foe_position, plate):
