@@ -44,16 +44,10 @@ def check_player_collision(player_position, foes):
     return player_position in foes
 
 
-def check_player_collision_2p(player1_position, player2_position, foes):
-    run = True
-    if check_player_collision(player1_position, foes):  # Vérifie si le joueur 1 entre en collision avec un ennemi ou l'inverse
-        print("Le joueur 1 est mort.")
-    elif check_player_collision(player2_position, foes):  # Vérifie si le joueur 2 entre en collision avec un ennemi ou l'inverse
-        print("Le joueur 2 est mort.")
-    elif check_player_collision(player2_position, foes) and check_player_collision(player1_position, foes):  # Vérifie si les 2 joueurs sont éliminés
-        print("Perdu !! Joueur 1 et 2 éliminés !")
-        run = False
-    return run
+def check_elemination(player_position, foes, player_live):
+    if player_position in foes:
+        player_live = False
+    return player_live
 
 
 def move_foe(player_position, foe_position, plate):

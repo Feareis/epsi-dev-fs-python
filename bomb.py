@@ -34,7 +34,7 @@ def update_bombs(screen, game_plate, foes, player_position, nb_line, nb_column):
 
 def explode_bomb(position, game_plate, foes, player_position, nb_line, nb_column):
     x, y = position  # Coordonnées de la bombe
-    explosion_area = [(x, y), (x + 2, y), (x - 2, y), (x, y + 2), (x, y - 2)]  # zone d'explosion : la position de la bombe et les 2 cases adjacentes
+    explosion_area = [(x, y), (x + 1, y), (x + 2, y), (x - 1, y), (x - 2, y), (x, y + 1), (x, y + 2), (x, y - 1), (x, y - 2)]  # zone d'explosion : la position de la bombe et les 2 cases adjacentes
     player_hit = False
     for ex, ey in explosion_area:  # Parcourt chaque case dans la zone d'explosion
         if 0 <= ex < nb_line and 0 <= ey < nb_column:  # Vérifie si les coordonnées sont dans les limites du plateau

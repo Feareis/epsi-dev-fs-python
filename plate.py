@@ -3,6 +3,10 @@ import random
 import game_settings as gs
 
 
+player1_live = True
+player2_live = True
+
+
 def starting_plate(nb_line, nb_column, bricks):
     plate = []
 
@@ -87,11 +91,11 @@ def view_plate(screen, plate, player1_position, foes, player2_position=None):
             rect = j * gs.TAILLE_CASE, i * gs.TAILLE_CASE, gs.TAILLE_CASE, gs.TAILLE_CASE
 
             # Vérifie si la position actuelle correspond à celle du joueur
-            if (i, j) == player1_position:
+            if player1_live and (i, j) == player1_position:
                 pygame.draw.rect(screen, gs.COULEUR_JOUEUR1, rect)
 
             # Vérifie si la position actuelle correspond à celle du joueur 2, si défini
-            elif player2_position and (i, j) == player2_position:
+            elif player2_position and player2_live and (i, j) == player2_position:
                 pygame.draw.rect(screen, gs.COULEUR_JOUEUR2, rect)
 
             # Vérifie si la position actuelle correspond à celle d'un ennemi

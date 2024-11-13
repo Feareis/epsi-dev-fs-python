@@ -7,7 +7,10 @@ import game_settings as gs
 import db
 
 
+global player1_live, player2_live
+
 def run_game_2p():
+    global player1_live, player2_live
     pygame.init()  # Initialisation de la bibliothèque Pygame
 
 
@@ -37,6 +40,8 @@ def run_game_2p():
     player2_position = (nb_line - 1, nb_column - 1)  # Position initiale du joueur 2
     score_j1 = 1000  # Le joueur 1 commence avec 1000 points
     score_j2 = 1000  # Le joueur 2 commence avec 1000 points
+    player1_live = True
+    player2_live = True
     dscore = 1  # décrémentation de score
     foes_move_delay = 1000  # Délai entre les déplacements des ennemis (ms)
     last_foe_move_time = pygame.time.get_ticks()  # Initialisation du tick de deplacement (temps écoulé depuis le dernier mouvement)
@@ -95,7 +100,8 @@ def run_game_2p():
                     bomb.add_bomb(player2_position)
 
         # vérification des collision j/j - e/j
-        player.check_player_collision_2p(player1_position, player2_position, foes)
+        player1_live = player.check_elemination(player1_position, foes, player1_live)
+        player2_live = player.check_elemination(player2_position, foes, player2_live)
 
         # Vérifie si le délai de déplacement des ennemis est écoulé
         ct = pygame.time.get_ticks()
@@ -104,7 +110,8 @@ def run_game_2p():
             last_foe_move_time = ct  # Met à jour le dernier moment de déplacement des ennemis
 
             # vérification des collision j/j - e/j
-            player.check_player_collision_2p(player1_position, player2_position, foes)
+            player1_live = player.check_elemination(player1_position, foes, player1_live)
+            player2_live = player.check_elemination(player2_position, foes, player2_live)
 
         # Dessine le plateau et les éléments
         screen.fill(gs.COULEUR_FOND)  # couleurs background
@@ -116,7 +123,8 @@ def run_game_2p():
 
         # Met à jour les bombes, gère leur affichage et leur explosion
         if bomb.update_bombs(screen, game_plate, foes, player1_position, nb_line, nb_column):
-            print("Perdu !")
-            run = False
+            player1_live = False
+        if bomb.update_bombs(screen, game_plate, foes, player2_position, nb_line, nb_column):
+            player2_live = False
 
         pygame.display.flip()  # Met à jour l'affichage de Pygame pour montrer les éléments récemment dessinés
