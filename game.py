@@ -4,6 +4,7 @@ import player
 import bomb
 import pygame
 import game_settings as gs
+import time
 import db
 
 
@@ -29,6 +30,10 @@ def run_game(load_saved=False):
     """
     Paramètres du jeu
     """
+    # Temps maximum de jeu : 10 minutes
+    max_game_time = 600
+    start_time = time.time()
+
     if load_saved:
         loaded_game = db.load_game()
         if loaded_game:
@@ -36,7 +41,7 @@ def run_game(load_saved=False):
         else:
             return
     else:
-        nb_line, nb_column = 13, 13  # Dimensions du plateau de jeu (nombre de lignes et de colonnes)
+        nb_line, nb_column = menu.size_menu() # Dimensions du plateau de jeu (nombre de lignes et de colonnes)
         foes = gs.INITIAL_FOES_POSITIONS  # Positions des ennemis sur le plateau
         # game_plate = plate.starting_plate(nb_line, nb_column, bricks=[(0, 4), (4, 6), (11, 13), (2, 7), (2, 7)])  # Création du plateau de jeu fixe
         game_plate = plate.random_plate(nb_line, nb_column)  # Plateau random avec ratio
@@ -53,6 +58,23 @@ def run_game(load_saved=False):
     """
     run = True
     while run:
+        # Calcul du temps restant
+        temp_time = time.time() - start_time
+        remaining_time = max(0, int(max_game_time - temp_time))
+
+        # Vérifie si le temps est écoulé
+        if remaining_time <= 0:
+            print("Temps écoulé !")
+            run = False
+
+        # Formate le temps restant en minutes et secondes
+        minutes, seconds = divmod(remaining_time, 60)
+        time_text = f"Temps : {minutes:02d}:{seconds:02d}"
+
+        # Affichage du temps en haut à droite
+        time_display = font.render(time_text, True, gs.BLACK)
+        screen.blit(time_display, (gs.TAILLE_FENETRE // 2 - time_display.get_width() // 2, 100))
+
         for event in pygame.event.get():  # Gestion des événements de Pygame (fermeture de la fenêtre et appui sur les touches)
             if event.type == pygame.QUIT:
                 run = False  # Quitte la boucle si l'événement de fermeture est détecté
@@ -109,7 +131,7 @@ def run_game(load_saved=False):
 
         # Score
         if score > 0:
-            score_text = font.render(f"Score: {score}", True, (0, 0, 0))  # affiche le score en cours
+            score_text = font.render(f"Score: {score}", True, gs.BLACK)  # affiche le score en cours
             screen.blit(score_text, (10, 10))  # destination d'affichage -> top left
         else:
             print("Perdu !")  # Si le score tombe à 0, la partie est perdue
