@@ -74,5 +74,5 @@ pip install -r requirements.txt
 ```
 To run the program, simply execute <b>Bomberman</b> :
 ```
-py menu.py
+py Bomberman.py
 ```
