@@ -5,13 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9a54a5b9-387f-429d-b12f-9810b444515e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/epsi-dev-fs-python.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/epsi-dev-fs-python.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_2p.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_2p.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/plate.py" beforeDir="false" afterPath="$PROJECT_DIR$/plate.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +47,7 @@
     "Python.test3.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/vreis/Desktop/epsi-dev-fs-python/tests",
+    "last_opened_file_path": "C:/Users/EPSI_Invite/Desktop/epsi-dev-fs-python",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
@@ -63,7 +59,7 @@
       <recent name="C:\Users\vreis\Desktop\epsi-dev-fs-python\db" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test3">
+  <component name="RunManager" selected="Python.Bomberman">
     <configuration name="Bomberman" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="epsi-dev-fs-python" />
       <option name="ENV_FILES" value="" />
@@ -176,8 +172,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.test3" />
         <item itemvalue="Python.Bomberman" />
+        <item itemvalue="Python.test3" />
         <item itemvalue="Python.test2" />
         <item itemvalue="Python.test" />
         <item itemvalue="Python.menu" />
