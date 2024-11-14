@@ -2,47 +2,83 @@ import time
 import game_settings as gs
 import pygame
 
-
-bombs = []  # Liste pour stocker les bombes posées avec leur position et heure de pose
-
+# Stores active bombs with their position and timestamp of when they were placed
+bombs = []
 
 def add_bomb(position):
-    # Ajoute une bombe à la liste avec sa position et l'heure actuelle de pose ((x, y), time)
+    """
+    Adds a bomb to the active bombs list, recording its position and placement time.
+
+    This function logs the bomb's position on the board and the time at which it was placed,
+    allowing future handling of its explosion timing.
+
+    :param position: Tuple (x, y) indicating the bomb’s deposit position, typically the player’s current position.
+    :return: None
+    """
     bombs.append({"position": position, "time": time.time()})
-    # print(f"Bombe posée à {position}")
 
 
-def update_bombs(screen, game_plate, foes, player_position, nb_line, nb_column):
-    # Met à jour les bombes en vérifiant si elles doivent exploser et retourne True si le joueur est touché
+def update_bombs(screen, board, enemy_positions, player_position, board_height, board_width):
+    """
+    Updates the status and display of bombs, handling their explosions when ready.
+
+    Bombs ready to explode affect the game board by damaging adjacent areas and checking
+    for player impact. Displays all active bombs on the screen.
+
+    :param screen: Pygame surface for drawing bombs.
+    :param board: The current state of the game board.
+    :param enemy_positions: List of enemy positions on the board.
+    :param player_position: Current player position on the board.
+    :param board_height: Total number of lines on the game board.
+    :param board_width: Total number of columns on the game board.
+    :return: Boolean - True if the player is hit by an explosion, False otherwise.
+    """
     current_time = time.time()
-    # Liste des bombes qui doivent exploser (celles posées depuis plus de 2 secondes)
     to_explode = [bomb for bomb in bombs if current_time - bomb["time"] >= 2]
 
-    player_hit = False
-    # Parcourt les bombes qui doivent exploser
+    player_hit = False  # Tracks if player is hit by an explosion
     for bomb in to_explode:
-        # Déclenche l'explosion et vérifie si elle touche le joueur
-        if explode_bomb(bomb["position"], game_plate, foes, player_position, nb_line, nb_column):
-            player_hit = True  # Indique que le joueur est touché par une explosion
-        bombs.remove(bomb)  # Supprime la bombe de la liste après explosion
-    for bomb in bombs:  # Affiche toutes les bombes sur le plateau, même celles qui n'ont pas encore explosé
-        x, y = bomb["position"]  # Position de la bombe
-        rect = (y * gs.TAILLE_CASE, x * gs.TAILLE_CASE, gs.TAILLE_CASE, gs.TAILLE_CASE)  # Rectangle de la bombe
-        pygame.draw.rect(screen, gs.COULEUR_BOMB, rect)  # Dessine la bombe en jaune
-    return player_hit  # Retourne True si le joueur est touché par une explosion
+        if explode_bomb(bomb["position"], board, enemy_positions, player_position, board_height, board_width):
+            player_hit = True
+        bombs.remove(bomb)  # Remove bomb after it has exploded
+
+    for bomb in bombs:  # Draws all active bombs on the screen
+        x, y = bomb["position"]
+        rect = (y * gs.TAILLE_CASE, x * gs.TAILLE_CASE, gs.TAILLE_CASE, gs.TAILLE_CASE)
+        pygame.draw.rect(screen, gs.COULEUR_BOMB, rect)
+    return player_hit
 
 
-def explode_bomb(position, game_plate, foes, player_position, nb_line, nb_column):
-    x, y = position  # Coordonnées de la bombe
-    explosion_area = [(x, y), (x + 1, y), (x + 2, y), (x - 1, y), (x - 2, y), (x, y + 1), (x, y + 2), (x, y - 1), (x, y - 2)]  # zone d'explosion : la position de la bombe et les 2 cases adjacentes
+def explode_bomb(position, board, enemy_positions, player_position, board_height, board_width):
+    """
+    Handles the explosion effect of a bomb, affecting surrounding elements on the game board.
+
+    :param position: Position of the bomb.
+    :param board: Current game board.
+    :param enemy_positions: List of enemy positions.
+    :param player_position: Position of the player.
+    :param board_height: Number of rows on the game board.
+    :param board_width: Number of columns on the game board.
+    :return: True if the player is hit by the explosion, False otherwise.
+    """
+    x, y = position
+    explosion_area = [
+        (x, y),
+        (x + 1, y), (x + 2, y),
+        (x - 1, y), (x - 2, y),
+        (x, y + 1), (x, y + 2),
+        (x, y - 1), (x, y - 2)
+    ]
+
     player_hit = False
-    for ex, ey in explosion_area:  # Parcourt chaque case dans la zone d'explosion
-        if 0 <= ex < nb_line and 0 <= ey < nb_column:  # Vérifie si les coordonnées sont dans les limites du plateau
-            if (ex, ey) == player_position:  # Vérifie si le joueur est dans la zone d'explosion
-                player_hit = True  # Indique que le joueur a été touché par l'explosion
-            if game_plate[ex][ey] == "B":  # Vérifie si une brique cassable est dans la zone d'explosion
-                game_plate[ex][ey] = " "  # Remplace la brique cassable par une case vide
-            elif (ex, ey) in foes:  # Vérifie si un ennemi ou plusieurs ennemis est dans la zone d'explosion
-                foes.remove((ex, ey))  # Retire l'ennemi de la liste des ennemis
+    for ex, ey in explosion_area:
+        if not 0 <= ex < board_height and 0 <= ey < board_width:  # Ensures explosion is within board limits
+            continue
+        if (ex, ey) == player_position:  # Checks if player is hit
+            player_hit = True
+        if board[ex][ey] == "B":  # Destroys destructible walls
+            board[ex][ey] = " "
+        elif (ex, ey) in enemy_positions:  # Removes enemies in the blast radius
+            enemy_positions.remove((ex, ey))
 
-    return player_hit  # Retourne True si le joueur est touché par l'explosion
+    return player_hit
