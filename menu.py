@@ -87,7 +87,7 @@ def show_scores():
             elif event.type == pygame.KEYDOWN:
                 waiting = False  # Quitte l'affichage des scores si une touche est pressée
 
-def main_menu():
+def display_main_menu():
     options = ["Nouvelle Partie", "Charger une partie", "Meilleurs Scores", "Options", " ", "Quitter"]
     while True:
         choice = draw_menu("- Menu -", options)
@@ -215,5 +215,6 @@ def size_menu():
                     # Retourne la taille choisie une fois validée
                     return nb_line, nb_column
 
+
 if __name__ == "__main__":
-    main_menu()
+    display_main_menu()
