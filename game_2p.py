@@ -7,10 +7,7 @@ import game_settings as gs
 import db
 
 
-global player1_live, player2_live
-
 def run_game_2p():
-    global player1_live, player2_live
     pygame.init()  # Initialisation de la bibliothèque Pygame
 
 
@@ -44,7 +41,7 @@ def run_game_2p():
     player2_live = True
     dscore = 1  # décrémentation de score
     foes_move_delay = 1000  # Délai entre les déplacements des ennemis (ms)
-    last_foe_move_time = pygame.time.get_ticks()  # Initialisation du tick de deplacement (temps écoulé depuis le dernier mouvement)
+    last_foe_move = pygame.time.get_ticks()  # Initialisation du tick de deplacement (temps écoulé depuis le dernier mouvement)
 
 
     """
@@ -61,7 +58,7 @@ def run_game_2p():
                     if choice == "Reprendre":
                         continue
                     elif choice == "Options":
-                        print("Options")
+                        menu.options_menu(game_mode="game_2p")
                     elif choice == "Menu principal":
                         run = False  # Quitte la partie pour revenir au menu principal sans sauvegarde
 
@@ -100,22 +97,25 @@ def run_game_2p():
                     bomb.add_bomb(player2_position)
 
         # vérification des collision j/j - e/j
-        player1_live = player.check_elemination(player1_position, foes, player1_live)
-        player2_live = player.check_elemination(player2_position, foes, player2_live)
+        player1_live, player2_live = player.check_player_collision_2p(player1_position, player2_position, foes, player1_live, player2_live)
+        if player.check_game_end(player1_live, player2_live):
+            run = False
+
 
         # Vérifie si le délai de déplacement des ennemis est écoulé
         ct = pygame.time.get_ticks()
-        if ct - last_foe_move_time > foes_move_delay:  # si (temps actuel - dernier mouvement > delai de mouvement enemi)
-            foes = [player.move_foe(player1_position, foe, game_plate) for foe in foes]  # Met à jour toute les positions ennemis
-            last_foe_move_time = ct  # Met à jour le dernier moment de déplacement des ennemis
+        if ct - last_foe_move > foes_move_delay:  # si (temps actuel - dernier mouvement > delai de mouvement enemi)
+            foes = [player.update_foes_positions(player1_position, player2_position, foes, game_plate)]  # Met à jour toute les positions ennemis
+            last_foe_move = ct  # Met à jour le dernier moment de déplacement des ennemis
 
             # vérification des collision j/j - e/j
-            player1_live = player.check_elemination(player1_position, foes, player1_live)
-            player2_live = player.check_elemination(player2_position, foes, player2_live)
+            player1_live, player2_live = player.check_player_collision_2p(player1_position, player2_position, foes, player1_live, player2_live)
+            if player.check_game_end(player1_live, player2_live):
+                run = False
 
         # Dessine le plateau et les éléments
         screen.fill(gs.COULEUR_FOND)  # couleurs background
-        plate.view_plate(screen, game_plate, player1_position, foes, player2_position)  # Dessine le plateau de jeu et les éléments (joueur, ennemis, murs) à l'écran
+        plate.view_plate_2p(screen, game_plate, player1_position, player2_position, foes, player1_live, player2_live)  # Dessine le plateau de jeu et les éléments (joueur, ennemis, murs) à l'écran
 
         if not foes:
             print("Gagné !")  # Si il n'y a plus d'ennemis, la partie est gagné

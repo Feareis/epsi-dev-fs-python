@@ -134,16 +134,20 @@ def load_game_menu():
         return  # Retourne au menu principal sans faire d'actions supplémentaires
 
 
-def options_menu():
-    options = ["Langues", "Keybinds", " ", "Menu principale"]
+def options_menu(game_mode="game"):
+    options = ["Langues", "Keybinds", " ", "Retour"]
     choice = draw_menu("- Options -", options)
 
     if choice == "Langues":
         print("Langue")
     elif choice == "Touche":
         print("Keybinds")
-    elif choice == "Menu principale":
-        return  # Retourne au menu principal sans faire d'actions supplémentaires
+    elif choice == "Retour":
+        # Retourne au bon menu de pause en fonction du mode de jeu
+        if game_mode == "game":
+            return pause_menu()  # Retourne au menu pause de game
+        elif game_mode == "game_2p":
+            return pause_2p_menu()  # Retourne au menu pause de game_2p
 
 
 def size_menu():

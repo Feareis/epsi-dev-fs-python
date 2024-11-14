@@ -87,23 +87,16 @@ def run_game(load_saved=False):
                         db.save_game(player_position, foes, score, nb_line, nb_column, game_plate)
                         run = False
                     elif choice == "Options":
-                        print("Options")
+                        menu.options_menu(game_mode="game")
                     elif choice == "Menu principal":
                         run = False  # Quitte la partie pour revenir au menu principal sans sauvegarde
 
-                elif event.key == pygame.K_z:
-                    player_position = player.move_player(player_position, "z", game_plate)
+
+                elif event.key in [pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d]:
+                    direction = event.unicode
+                    player_position = player.move_player(player_position, direction, game_plate)
                     score -= dscore
-                elif event.key == pygame.K_s:
-                    player_position = player.move_player(player_position, "s", game_plate)
-                    score -= dscore
-                elif event.key == pygame.K_q:
-                    player_position = player.move_player(player_position, "q", game_plate)
-                    score -= dscore
-                elif event.key == pygame.K_d:
-                    player_position = player.move_player(player_position, "d", game_plate)
-                    score -= dscore
-                elif event.key == pygame.K_b:  # Ajoute une bombe avec la touche "b"
+                elif event.key == pygame.K_b:
                     bomb.add_bomb(player_position)
 
         if player.check_player_collision(player_position, foes):  # Vérifie si le joueur entre en collision avec un ennemi ou l'inverse

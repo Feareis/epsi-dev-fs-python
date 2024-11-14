@@ -3,10 +3,6 @@ import random
 import game_settings as gs
 
 
-player1_live = True
-player2_live = True
-
-
 def starting_plate(nb_line, nb_column, bricks):
     plate = []
 
@@ -83,7 +79,7 @@ def random_plate(nb_line, nb_column, iratio=None, dratio=None):
     return plate
 
 
-def view_plate(screen, plate, player1_position, foes, player2_position=None):
+def view_plate(screen, plate, player1_position, foes):
     for i, row in enumerate(plate):  # Parcourt chaque ligne du plateau (i -> index de la ligne, row -> contenu de la ligne)
         for j, case in enumerate(row):  # Parcourt chaque case de la ligne (j -> index de la case, case -> contenu de la case)
 
@@ -91,12 +87,8 @@ def view_plate(screen, plate, player1_position, foes, player2_position=None):
             rect = j * gs.TAILLE_CASE, i * gs.TAILLE_CASE, gs.TAILLE_CASE, gs.TAILLE_CASE
 
             # Vérifie si la position actuelle correspond à celle du joueur
-            if player1_live and (i, j) == player1_position:
+            if (i, j) == player1_position:
                 pygame.draw.rect(screen, gs.COULEUR_JOUEUR1, rect)
-
-            # Vérifie si la position actuelle correspond à celle du joueur 2, si défini
-            elif player2_position and player2_live and (i, j) == player2_position:
-                pygame.draw.rect(screen, gs.COULEUR_JOUEUR2, rect)
 
             # Vérifie si la position actuelle correspond à celle d'un ennemi
             elif (i, j) in foes:
@@ -115,7 +107,7 @@ def view_plate(screen, plate, player1_position, foes, player2_position=None):
                 pygame.draw.rect(screen, gs.COULEUR_CASE_VIDE, rect)
 
 
-def view_plate_2p(screen, plate, player1_position, player2_position, foes):
+def view_plate_2p(screen, plate, player1_position, player2_position, foes, player1_live, player2_live):
     for i, row in enumerate(plate):  # Parcourt chaque ligne du plateau (i -> index de la ligne, row -> contenu de la ligne)
         for j, case in enumerate(row):  # Parcourt chaque case de la ligne (j -> index de la case, case -> contenu de la case)
 
@@ -123,11 +115,11 @@ def view_plate_2p(screen, plate, player1_position, player2_position, foes):
             rect = j * gs.TAILLE_CASE, i * gs.TAILLE_CASE, gs.TAILLE_CASE, gs.TAILLE_CASE
 
             # Vérifie si la position actuelle correspond à celle du joueur
-            if (i, j) == player1_position:
+            if player1_live and (i, j) == player1_position:
                 pygame.draw.rect(screen, gs.COULEUR_JOUEUR1, rect)
 
-            # Vérifie si la position actuelle correspond à celle du joueur
-            elif (i, j) == player2_position:
+            # Vérifie si la position actuelle correspond à celle du joueur 2, si défini
+            elif player2_live and (i, j) == player2_position:
                 pygame.draw.rect(screen, gs.COULEUR_JOUEUR2, rect)
 
             # Vérifie si la position actuelle correspond à celle d'un ennemi
