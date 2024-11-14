@@ -1,174 +1,181 @@
 import sqlite3
 import os
+import json
 
+# Create the db directory if it doesn't exist
+if not os.path.exists("db"):
+    os.makedirs("db")
+
+# Define paths for database files within the "db" directory
 SCORE_DB_PATH = os.path.join("db", "scores.db")
 GAME_DB_PATH = os.path.join("db", "game.db")
 
 def initialize_scores_db():
-    conn = sqlite3.connect(SCORE_DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS high_scores (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            player_name TEXT NOT NULL,
-            score INTEGER NOT NULL
-        )
-    ''')
-    conn.commit()
-    conn.close()
+    """
+    Initializes the scores database by creating the 'high_scores' table if it does not exist.
+
+    :return: The table stores player IDs, names, and their respective scores.
+    """
+    with sqlite3.connect(SCORE_DB_PATH) as conn:
+        try:
+            cursor = conn.cursor()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS high_scores (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    player_name TEXT NOT NULL,
+                    score INTEGER NOT NULL
+                )
+            ''')
+            conn.commit()  # Commit the changes to create the table if it doesn't exist
+        except sqlite3.Error as e:
+            print(f"An error occurred: {e}")
 
 
-def save_score(player_name, score):
-    conn = sqlite3.connect("db/scores.db")  # DB Name
-    cursor = conn.cursor()
-    cursor.execute('''
-        INSERT INTO high_scores (player_name, score) VALUES (?, ?)
-        ''', (player_name, score))
-    conn.commit()
-    conn.close()
+def save_player_score(player_name, score):
+    """
+    Saves a player's score in the high_scores table.
+
+    :param player_name: The name of the player.
+    :param score: The score to be saved.
+    :return: None
+    """
+    with sqlite3.connect(SCORE_DB_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+                INSERT INTO high_scores (player_name, score) VALUES (?, ?)
+            ''', (player_name, score))
+
+        conn.commit()  # Commit the changes to create the table if it doesn't exist
 
 
-def game_end(score):
+def end_game_and_save_score(score):
+    """
+    Ends the game by prompting the player for their name and saving their score.
+
+    :param score: The final score of the player.
+    :return: None
+    """
     player_name = input("Entrez votre nom : ")
-    save_score(player_name, score)  # Sauvegarde du score du joueur
+    if not player_name.strip():
+        player_name = "Joueur Inconnu"  # Assign a default name if input is empty
+    save_player_score(player_name, score)
 
 
-def get_top_scores(limit=5):
-    conn = sqlite3.connect("db/scores.db")  # DB Name
-    cursor = conn.cursor()
-    cursor.execute('''
-        SELECT player_name, score
-        FROM high_scores 
-        ORDER BY score 
-        DESC LIMIT ?
+def get_top_player_scores(limit=5):
+    """
+    Retrieves the top scores from the high_scores table, ordered by score in descending order.
+
+    :param limit: The maximum number of top scores to retrieve (default is 5).
+    :return: A list of tuples containing player names and their scores.
+    """
+    with sqlite3.connect(SCORE_DB_PATH) as conn:
+        cursor = conn.cursor()
+
+        # Retrieve top scores ordered by descending score, limited by the specified limit
+        cursor.execute('''
+            SELECT player_name, score
+            FROM high_scores
+            ORDER BY score DESC
+            LIMIT ?
         ''', (limit,))
-    scores = cursor.fetchall()
-    conn.close()
+
+        scores = cursor.fetchall()  # Fetch all results as a list of tuples
     return scores
 
 
 def initialize_game_db():
-    conn = sqlite3.connect(GAME_DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS game_save (
-            id INTEGER PRIMARY KEY, 
-            player_position TEXT, 
-            foes_positions TEXT, 
-            score INTEGER, 
-            nb_line INTEGER, 
-            nb_column INTEGER, 
-            game_plate TEXT
-        )
-    ''')
-    conn.commit()
-    conn.close()
+    """
+    Initializes the game database by creating the 'game_save' table if it does not exist.
+    This table stores essential game data for saving and restoring game states.
+
+    :return: None
+    """
+    with sqlite3.connect(GAME_DB_PATH) as conn:
+        cursor = conn.cursor()
+
+        # Create 'game_save' table with columns for player position, enemies, score, grid size, and game state
+        cursor.execute('''
+                CREATE TABLE IF NOT EXISTS game_save (
+                    id INTEGER PRIMARY KEY, 
+                    player_position TEXT, 
+                    foes_positions TEXT, 
+                    score INTEGER, 
+                    nb_line INTEGER, 
+                    nb_column INTEGER, 
+                    game_plate TEXT
+                )
+            ''')
+
+        conn.commit()  # Commit the changes to create the table if it doesn't exist
 
 
-def save_game(player_position, foes_positions, score, nb_line, nb_column, game_plate):
-    conn = sqlite3.connect(GAME_DB_PATH)
-    cursor = conn.cursor()
-    # Supprimer la sauvegarde précédente
-    cursor.execute('DELETE FROM game_save')
-    cursor.execute('''
-        INSERT INTO game_save (id, player_position, foes_positions, score, nb_line, nb_column, game_plate) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    ''', (
-            1,
-            str(player_position),
-            str(foes_positions),
-            score,
-            nb_line,
-            nb_column,
-            str(game_plate)
-        ))
-    conn.commit()
-    conn.close()
+def save_single_game_state(player_position, enemy_positions, score, board_height, board_width, board):
+    """
+    Saves the current game state by storing player position, foes positions, score, grid size, and game plate.
+    Deletes any previous save to maintain a single saved game state.
+
+    :param player_position: The position of the player in the game.
+    :param enemy_positions: The positions of foes (enemies) in the game.
+    :param score: The current score of the player.
+    :param board_height: The number of lines in the game grid.
+    :param board_width: The number of columns in the game grid.
+    :param board: The state of the game grid.
+    :return: None
+    """
+    with sqlite3.connect(GAME_DB_PATH) as conn:
+        try:
+            cursor = conn.cursor()
+
+            # Delete any existing save to ensure only one game save exists
+            cursor.execute('DELETE FROM game_save')
+
+            # Insert the current game state into the game_save table
+            cursor.execute('''
+                INSERT INTO game_save (id, player_position, enemy_positions, score, board_height, board_width, board) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                1,  # ID is set to 1 for the single game save slot
+                str(player_position),
+                str(enemy_positions),
+                score,
+                board_height,
+                board_width,
+                str(board)
+            ))
+
+            conn.commit()  # Commit the changes to save the current game state
+        except sqlite3.Error as e:
+            print(f"An error occurred while saving the game state: {e}")
+
 
 def load_game():
-    conn = sqlite3.connect(GAME_DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-        SELECT player_position, foes_positions, score, nb_line, nb_column, game_plate 
-        FROM game_save 
-        WHERE id = 1
-    ''')
-    result = cursor.fetchone()
-    conn.close()
+    """
+    Loads the saved game state from the database if it exists.
+
+    :return: A tuple containing player position, enemy positions, score, board height, board width, and game board.
+             Returns None if no saved game state is found.
+    """
+    with sqlite3.connect(GAME_DB_PATH) as conn:
+        cursor = conn.cursor()
+
+        # Retrieve saved game state from the game_save table where id = 1
+        cursor.execute('''
+            SELECT player_position, enemy_positions, score, board_height, board_width, board 
+            FROM game_save 
+            WHERE id = 1
+        ''')
+
+        result = cursor.fetchone()  # Fetch the first row of the result set
+
     if result:
-        player_position = eval(result[0])
-        foes_positions = eval(result[1])
+        # Convert JSON strings back to original data structures
+        player_position = json.loads(result[0])
+        enemy_positions = json.loads(result[1])
         score = result[2]
-        nb_line = result[3]
-        nb_column = result[4]
-        game_plate = eval(result[5])
-        return player_position, foes_positions, score, nb_line, nb_column, game_plate
-    return None
+        board_height = result[3]
+        board_width = result[4]
+        board = json.loads(result[5])
 
+        return player_position, enemy_positions, score, board_height, board_width, board
 
-# db game_2p ???
-"""
-def initialize_game_2p_db():
-    conn = sqlite3.connect(GAME_DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS game_save (
-            id INTEGER PRIMARY KEY, 
-            player1_position TEXT, 
-            player2_position TEXT, 
-            foes_positions TEXT, 
-            score_p1 INTEGER, 
-            score_p2 INTEGER, 
-            nb_line INTEGER, 
-            nb_column INTEGER, 
-            game_plate TEXT
-        )
-    ''')
-    conn.commit()
-    conn.close()
-
-
-def save_game_2p(player1_position, player2_position, foes_positions, score_p1, score_p2, nb_line, nb_column, game_plate):
-    conn = sqlite3.connect(GAME_DB_PATH)
-    cursor = conn.cursor()
-    # Supprimer la sauvegarde précédente
-    cursor.execute('DELETE FROM game_save')
-    cursor.execute('''
-        INSERT INTO game_save (id, player1_position, player2_position, foes_positions, score_p1, score_p2, nb_line, nb_column, game_plate)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (
-            1,
-            str(player1_position),
-            str(player2_position),
-            str(foes_positions),
-            score_p1,
-            score_p2,
-            nb_line,
-            nb_column,
-            str(game_plate)
-        ))
-    conn.commit()
-    conn.close()
-
-def load_game_2p():
-    conn = sqlite3.connect(GAME_DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-        SELECT player1_position, player2_position, foes_positions, score_p1, score_p2, nb_line, nb_column, game_plate
-        FROM game_save 
-        WHERE id = 1
-    ''')
-    result = cursor.fetchone()
-    conn.close()
-    if result:
-        player1_position = eval(result[0])
-        player2_position = eval(result[1])
-        foes_positions = eval(result[2])
-        score_p1 = result[3]
-        score_p2 = result[4]
-        nb_line = result[5]
-        nb_column = result[6]
-        game_plate = eval(result[7])
-        return player1_position, player2_position, foes_positions, score_p1, score_p2, nb_line, nb_column, game_plate
-    return None
-"""
+    return None  # Return None if no game state is found
