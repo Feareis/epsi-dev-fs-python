@@ -76,14 +76,14 @@ def run_game(load_saved=False):
                 if event.key == pygame.K_ESCAPE:
                     choice = menu.pause_menu()
 
-                    if choice == "Reprendre":
+                    if choice == "Resume":
                         continue  # Continue game without changes
-                    elif choice == "Sauvegarder la partie":
+                    elif choice == "Save Game":
                         db.save_single_game_state(player_position, enemy_positions, score, board_height, board_width, board)
                         run = False  # Exit after saving
                     elif choice == "Options":
                         menu.options_menu(game_mode="game")
-                    elif choice == "Menu principal":
+                    elif choice == "Main Menu":
                         run = False  # Exit to the main menu without saving
 
                 # Player movement
@@ -102,7 +102,7 @@ def run_game(load_saved=False):
 
         # --- Collision checks and game-over conditions ---
         if player.check_player_collision(player_position, enemy_positions):
-            print("Défaite !")
+            print("Defeated !")
             run = False
 
         # --- Enemy movement after delay ---
@@ -111,7 +111,7 @@ def run_game(load_saved=False):
             enemy_positions = player.update_foes_positions(player_position, enemy_positions, board)
             last_enemy_move_time = ct
             if player.check_player_collision(player_position, enemy_positions):
-                print("Défaite !")
+                print("Defeated !")
                 run = False
 
         # --- Drawing the board elements ---
@@ -120,14 +120,14 @@ def run_game(load_saved=False):
 
         # --- Victory condition ---
         if not enemy_positions:
-            print("Victoire !")
+            print("Victory !")
             db.end_game_and_save_score(score)
             run = False
 
         # --- Remaining time management ---
         remaining_time = get_remaining_time(start_time, max_game_time)
         if remaining_time <= 0:
-            print("Défaite !")
+            print("Defeated !")
             run = False
         minutes, seconds = divmod(remaining_time, 60)  # Convert remaining time to minutes and seconds
 
@@ -140,12 +140,12 @@ def run_game(load_saved=False):
             score_text = font.render(f"Score: {score}", True, gs.BLACK)
             screen.blit(score_text, (10, 10))  # Display at the top left
         else:
-            print("Défaite !")
+            print("Defeated !")
             run = False
 
         # --- Bomb handling ---
         if bomb.update_bombs(screen, board, enemy_positions, player_position, board_height, board_width):
-            print("Défaite !")
+            print("Defeated !")
             run = False
 
         # --- Update Pygame display ---
