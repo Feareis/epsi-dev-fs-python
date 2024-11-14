@@ -105,7 +105,7 @@ def run_game_2p():
         # Vérifie si le délai de déplacement des ennemis est écoulé
         ct = pygame.time.get_ticks()
         if ct - last_foe_move > foes_move_delay:  # si (temps actuel - dernier mouvement > delai de mouvement enemi)
-            foes = [player.update_foes_positions(player1_position, player2_position, foes, game_plate)]  # Met à jour toute les positions ennemis
+            foes = player.update_foes_positions(player1_position, player2_position, foes, game_plate, player1_live, player2_live)  # Met à jour toute les positions ennemis
             last_foe_move = ct  # Met à jour le dernier moment de déplacement des ennemis
 
             # vérification des collision j/j - e/j

@@ -98,16 +98,22 @@ def move_foe(player_position, foe_position, plate):
     return foe_position
 
 
-def move_foe_2p(player1_position, player2_position, foe_position, plate):
-    de_p1 = distance_euclidienne(player1_position, foe_position)
-    de_p2 = distance_euclidienne(player2_position, foe_position)
-
-    if de_p1 <= de_p2:  # Choisir la position du joueur le plus proche
+def move_foe_2p(player1_position, player2_position, foe_position, plate, player1_live, player2_live):
+    if player1_live and player2_live:
+        de_p1 = distance_euclidienne(player1_position, foe_position)
+        de_p2 = distance_euclidienne(player2_position, foe_position)
+        if de_p1 <= de_p2:  # Choisir la position du joueur le plus proche
+            target_position = player1_position
+        else:
+            target_position = player2_position
+    elif player1_live:
         target_position = player1_position
-    else:
+    elif player2_live:
         target_position = player2_position
+    else:
+        return foe_position
 
-    if min(de_p1, de_p2) <= 4:  # Utiliser le joueur cible si la distance est inférieure ou égale à 4
+    if distance_euclidienne(target_position, foe_position) <= 4:  # Utiliser le joueur cible si la distance est inférieure ou égale à 4
         px, py = target_position
         fx, fy = foe_position
         directions = []
@@ -144,10 +150,10 @@ def move_foe_2p(player1_position, player2_position, foe_position, plate):
     return foe_position
 
 
-def update_foes_positions(player1_position, player2_position, foes, plate):
+def update_foes_positions(player1_position, player2_position, foes, plate, player1_live, player2_live):
     foes_positions = []
     for foe_position in foes:
-        nw_foe_position = move_foe_2p(player1_position, player2_position, foe_position, plate)
+        nw_foe_position = move_foe_2p(player1_position, player2_position, foe_position, plate, player1_live, player2_live)
         foes_positions.append(nw_foe_position)
     return foes_positions
 
