@@ -5,6 +5,16 @@ import bomb
 import pygame
 import game_settings as gs
 import db
+import time
+
+
+# Temps maximum de jeu
+max_game_time = gs.MAX_GAME_TIME
+
+
+def get_remaining_time(start_time):
+    elapsed_time = time.time() - start_time
+    return max(0, int(max_game_time - elapsed_time))
 
 
 def run_game_2p():
@@ -16,7 +26,7 @@ def run_game_2p():
     """
     screen = pygame.display.set_mode((gs.TAILLE_FENETRE, gs.TAILLE_FENETRE), pygame.RESIZABLE)
     pygame.display.set_caption("Bomberman")  # Titre de la fenêtre du jeu
-    # font = pygame.font.Font(None, 36)  # Définir la police d'affichage pour le score
+    font = pygame.font.Font(None, 36)  # Définir la police d'affichage pour le temps
 
 
     """
@@ -42,6 +52,7 @@ def run_game_2p():
     dscore = 1  # décrémentation de score
     foes_move_delay = 1000  # Délai entre les déplacements des ennemis (ms)
     last_foe_move = pygame.time.get_ticks()  # Initialisation du tick de deplacement (temps écoulé depuis le dernier mouvement)
+    start_time = time.time()  # Temps de démarrage
 
 
     """
@@ -99,6 +110,7 @@ def run_game_2p():
         # vérification des collision j/j - e/j
         player1_live, player2_live = player.check_player_collision_2p(player1_position, player2_position, foes, player1_live, player2_live)
         if player.check_game_end(player1_live, player2_live):
+            print("Défaite collective !")
             run = False
 
 
@@ -111,15 +123,31 @@ def run_game_2p():
             # vérification des collision j/j - e/j
             player1_live, player2_live = player.check_player_collision_2p(player1_position, player2_position, foes, player1_live, player2_live)
             if player.check_game_end(player1_live, player2_live):
+                print("Défaite collective !")
                 run = False
 
         # Dessine le plateau et les éléments
         screen.fill(gs.COULEUR_FOND)  # couleurs background
         plate.view_plate_2p(screen, game_plate, player1_position, player2_position, foes, player1_live, player2_live)  # Dessine le plateau de jeu et les éléments (joueur, ennemis, murs) à l'écran
 
-        if not foes:
-            print("Gagné !")  # Si il n'y a plus d'ennemis, la partie est gagné
+        if not foes and player1_live is False:
+            print("Victoire du joueur 2 !")  # Si il n'y a plus d'ennemis et que au moins 1 joueur est mort, la partie est gagné par le joueur restant
             run = False
+        if not foes and player2_live is False:
+            print("Victoire du joueur 1 !")  # Si il n'y a plus d'ennemis et que au moins 1 joueur est mort, la partie est gagné par le joueur restant
+            run = False
+
+        # Temps
+        remaining_time = get_remaining_time(start_time)
+
+        if remaining_time <= 0:
+            print("Match Nul !")
+            run = False
+        minutes, seconds = divmod(remaining_time, 60)  # Formate le temps restant en minutes et secondes
+
+        # Affichage du temps en haut à droite
+        time_display = font.render(f"Temps : {minutes:02d}:{seconds:02d}", True, gs.BLACK)
+        screen.blit(time_display, (10, 10))
 
         # Met à jour les bombes, gère leur affichage et leur explosion
         if bomb.update_bombs(screen, game_plate, foes, player1_position, nb_line, nb_column):

@@ -8,6 +8,15 @@ import time
 import db
 
 
+# Temps maximum de jeu
+max_game_time = gs.MAX_GAME_TIME
+
+
+def get_remaining_time(start_time):
+    elapsed_time = time.time() - start_time
+    return max(0, int(max_game_time - elapsed_time))
+
+
 def run_game(load_saved=False):
     pygame.init()  # Initialisation de la bibliothèque Pygame
 
@@ -30,10 +39,6 @@ def run_game(load_saved=False):
     """
     Paramètres du jeu
     """
-    # Temps maximum de jeu : 10 minutes
-    max_game_time = 600
-    start_time = time.time()
-
     if load_saved:
         loaded_game = db.load_game()
         if loaded_game:
@@ -48,6 +53,8 @@ def run_game(load_saved=False):
         player_position = gs.STARTING_PLAYER1_POSITION  # Position initiale du joueur
         score = 1000  # Le joueur 1 commence avec 1000 points
 
+    start_time = time.time()  # Temps de démarrage
+
     dscore = 1  # décrémentation de score
     foes_move_delay = 1000  # Délai entre les déplacements des ennemis (ms)
     last_foe_move_time = pygame.time.get_ticks()  # Initialisation du tick de deplacement (temps écoulé depuis le dernier mouvement)
@@ -58,23 +65,6 @@ def run_game(load_saved=False):
     """
     run = True
     while run:
-        # Calcul du temps restant
-        temp_time = time.time() - start_time
-        remaining_time = max(0, int(max_game_time - temp_time))
-
-        # Vérifie si le temps est écoulé
-        if remaining_time <= 0:
-            print("Temps écoulé !")
-            run = False
-
-        # Formate le temps restant en minutes et secondes
-        minutes, seconds = divmod(remaining_time, 60)
-        time_text = f"Temps : {minutes:02d}:{seconds:02d}"
-
-        # Affichage du temps en haut à droite
-        time_display = font.render(time_text, True, gs.BLACK)
-        screen.blit(time_display, (gs.TAILLE_FENETRE // 2 - time_display.get_width() // 2, 100))
-
         for event in pygame.event.get():  # Gestion des événements de Pygame (fermeture de la fenêtre et appui sur les touches)
             if event.type == pygame.QUIT:
                 run = False  # Quitte la boucle si l'événement de fermeture est détecté
@@ -84,7 +74,7 @@ def run_game(load_saved=False):
                     if choice == "Reprendre":
                         continue
                     elif choice == "Sauvegarder la partie":
-                        db.save_game(player_position, foes, score, nb_line, nb_column, game_plate)
+                        db.save_game(player_position, foes, score, nb_line, nb_column, game_plate, remaining_time)
                         run = False
                     elif choice == "Options":
                         menu.options_menu(game_mode="game")
@@ -118,9 +108,21 @@ def run_game(load_saved=False):
         plate.view_plate(screen, game_plate, player_position, foes)  # Dessine le plateau de jeu et les éléments (joueur, ennemis, murs) à l'écran
 
         if not foes:
-            print("Gagné !")  # # Si il n'y a plus d'ennemis, la partie est gagné
+            print("Gagné !")  # Si il n'y a plus d'ennemis, la partie est gagné
             db.game_end(score)
             run = False
+
+        # Temps
+        remaining_time = get_remaining_time(start_time)
+
+        if remaining_time <= 0:
+            print("Temps écoulé !")
+            run = False
+        minutes, seconds = divmod(remaining_time, 60)  # Formate le temps restant en minutes et secondes
+
+        # Affichage du temps en haut à droite
+        time_display = font.render(f"Temps : {minutes:02d}:{seconds:02d}", True, gs.BLACK)
+        screen.blit(time_display, ((gs.TAILLE_FENETRE // 2) + 20, 10))
 
         # Score
         if score > 0:

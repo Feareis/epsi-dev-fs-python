@@ -65,7 +65,7 @@ def initialize_game_db():
     conn.close()
 
 
-def save_game(player_position, foes_positions, score, nb_line, nb_column, game_plate):
+def save_game(player_position, foes_positions, score, nb_line, nb_column, game_plate, remaining_time):
     conn = sqlite3.connect(GAME_DB_PATH)
     cursor = conn.cursor()
     # Supprimer la sauvegarde précédente
