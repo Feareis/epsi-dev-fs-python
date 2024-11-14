@@ -65,7 +65,7 @@ def random_plate(nb_line, nb_column, iratio=None, dratio=None):
                 plate[x2 - 1][y2 - 1] = " "
 
     # Assurer une zone vide autour de la position initiale des ennemis
-    for foe in gs.INITIAL_FOES_POSITIONS:
+    for foe in gs.INITIAL_ENEMY_POSITIONS:
         fx, fy = foe
         if 0 <= fx < nb_line and 0 <= fy < nb_column:
             plate[fx][fy] = " "
@@ -84,27 +84,27 @@ def view_plate(screen, plate, player1_position, foes):
         for j, case in enumerate(row):  # Parcourt chaque case de la ligne (j -> index de la case, case -> contenu de la case)
 
             # Défini le rectangle pour la case actuelle
-            rect = j * gs.TAILLE_CASE, i * gs.TAILLE_CASE, gs.TAILLE_CASE, gs.TAILLE_CASE
+            rect = j * gs.CELL_SIZE, i * gs.CELL_SIZE, gs.CELL_SIZE, gs.CELL_SIZE
 
             # Vérifie si la position actuelle correspond à celle du joueur
             if (i, j) == player1_position:
-                pygame.draw.rect(screen, gs.COULEUR_JOUEUR1, rect)
+                pygame.draw.rect(screen, gs.COLOR_PLAYER1, rect)
 
             # Vérifie si la position actuelle correspond à celle d'un ennemi
             elif (i, j) in foes:
-                pygame.draw.rect(screen, gs.COULEUR_ENNEMI, rect)
+                pygame.draw.rect(screen, gs.COLOR_ENEMY, rect)
 
             # Vérifie si la case actuelle est un mur indestructible
             elif case == "X":
-                pygame.draw.rect(screen, gs.COULEUR_CASE_INDESTRUCTIBLE, rect)
+                pygame.draw.rect(screen, gs.COLOR_INDESTRUCTIBLE_BLOCK, rect)
 
             # Vérifie si la case actuelle est une brique cassable
             elif case == "B":
-                pygame.draw.rect(screen, gs.COULEUR_BRIQUE_CASSABLE, rect)
+                pygame.draw.rect(screen, gs.COLOR_BREAKABLE_BRICK, rect)
 
             # Affiche une case vide si elle ne contient ni joueur, ni ennemi, ni mur, ni brique cassable
             else:
-                pygame.draw.rect(screen, gs.COULEUR_CASE_VIDE, rect)
+                pygame.draw.rect(screen, gs.COLOR_EMPTY_CELL, rect)
 
 
 def view_plate_2p(screen, plate, player1_position, player2_position, foes, player1_live, player2_live):
@@ -112,28 +112,28 @@ def view_plate_2p(screen, plate, player1_position, player2_position, foes, playe
         for j, case in enumerate(row):  # Parcourt chaque case de la ligne (j -> index de la case, case -> contenu de la case)
 
             # Défini le rectangle pour la case actuelle
-            rect = j * gs.TAILLE_CASE, i * gs.TAILLE_CASE, gs.TAILLE_CASE, gs.TAILLE_CASE
+            rect = j * gs.CELL_SIZE, i * gs.CELL_SIZE, gs.CELL_SIZE, gs.CELL_SIZE
 
             # Vérifie si la position actuelle correspond à celle du joueur
             if player1_live and (i, j) == player1_position:
-                pygame.draw.rect(screen, gs.COULEUR_JOUEUR1, rect)
+                pygame.draw.rect(screen, gs.COLOR_PLAYER1, rect)
 
             # Vérifie si la position actuelle correspond à celle du joueur 2, si défini
             elif player2_live and (i, j) == player2_position:
-                pygame.draw.rect(screen, gs.COULEUR_JOUEUR2, rect)
+                pygame.draw.rect(screen, gs.COLOR_PLAYER2, rect)
 
             # Vérifie si la position actuelle correspond à celle d'un ennemi
             elif (i, j) in foes:
-                pygame.draw.rect(screen, gs.COULEUR_ENNEMI, rect)
+                pygame.draw.rect(screen, gs.COLOR_ENEMY, rect)
 
             # Vérifie si la case actuelle est un mur indestructible
             elif case == "X":
-                pygame.draw.rect(screen, gs.COULEUR_CASE_INDESTRUCTIBLE, rect)
+                pygame.draw.rect(screen, gs.COLOR_INDESTRUCTIBLE_BLOCK, rect)
 
             # Vérifie si la case actuelle est une brique cassable
             elif case == "B":
-                pygame.draw.rect(screen, gs.COULEUR_BRIQUE_CASSABLE, rect)
+                pygame.draw.rect(screen, gs.COLOR_BREAKABLE_BRICK, rect)
 
             # Affiche une case vide si elle ne contient ni joueur, ni ennemi, ni mur, ni brique cassable
             else:
-                pygame.draw.rect(screen, gs.COULEUR_CASE_VIDE, rect)
+                pygame.draw.rect(screen, gs.COLOR_EMPTY_CELL, rect)

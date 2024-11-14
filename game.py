@@ -35,7 +35,7 @@ def run_game(load_saved=False):
 
     # --- Pygame initialization and window settings ---
     pygame.init()
-    screen = pygame.display.set_mode((gs.TAILLE_FENETRE, gs.TAILLE_FENETRE), pygame.RESIZABLE)
+    screen = pygame.display.set_mode((gs.WINDOW_SIZE, gs.WINDOW_SIZE), pygame.RESIZABLE)
     pygame.display.set_caption("Bomberman")  # Game window title
     font = pygame.font.Font(None, 36)  # Font for displaying score and time
 
@@ -52,7 +52,7 @@ def run_game(load_saved=False):
             return  # End if no saved game is found
     else:
         board_height, board_width = menu.size_menu() # Board dimensions (number of rows and columns)
-        enemy_positions = gs.INITIAL_FOES_POSITIONS  # Initial enemy positions
+        enemy_positions = gs.INITIAL_ENEMY_POSITIONS  # Initial enemy positions
         board = plate.random_plate(board_height, board_width)  # Random game board
         player_position = gs.STARTING_PLAYER1_POSITION  # Initial player position
         score = 1000  # Initial player score
@@ -115,7 +115,7 @@ def run_game(load_saved=False):
                 run = False
 
         # --- Drawing the board elements ---
-        screen.fill(gs.COULEUR_FOND)  # Background color
+        screen.fill(gs.COLOR_BACKGROUND)  # Background color
         plate.view_plate(screen, board, player_position, enemy_positions)  # Draw the game board with player and enemies
 
         # --- Victory condition ---
@@ -133,7 +133,7 @@ def run_game(load_saved=False):
 
         # Display remaining time at the top right
         time_display = font.render(f"Temps : {minutes:02d}:{seconds:02d}", True, gs.BLACK)
-        screen.blit(time_display, ((gs.TAILLE_FENETRE // 2) + 20, 10))
+        screen.blit(time_display, ((gs.WINDOW_SIZE // 2) + 20, 10))
 
         # --- Display score ---
         if score > 0:

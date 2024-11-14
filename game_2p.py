@@ -34,7 +34,7 @@ def run_game_2p():
 
     # --- Pygame initialization and window settings ---
     pygame.init()
-    screen = pygame.display.set_mode((gs.TAILLE_FENETRE, gs.TAILLE_FENETRE), pygame.RESIZABLE)
+    screen = pygame.display.set_mode((gs.WINDOW_SIZE, gs.WINDOW_SIZE), pygame.RESIZABLE)
     pygame.display.set_caption("Bomberman")  # Game window title
     font = pygame.font.Font(None, 36)  # Font for displaying score and time
 
@@ -43,7 +43,7 @@ def run_game_2p():
 
     # --- Game parameters ---
     board_height, board_width = 13, 13  # Game board dimensions (number of rows and columns)
-    enemy_positions = gs.INITIAL_FOES_POSITIONS  # Initial enemy positions
+    enemy_positions = gs.INITIAL_ENEMY_POSITIONS  # Initial enemy positions
     game_plate = plate.random_plate(board_height, board_width)  # Random game board setup
 
     # Initial positions and scores
@@ -129,7 +129,7 @@ def run_game_2p():
                 run = False
 
         # --- Draw game board and elements ---
-        screen.fill(gs.COULEUR_FOND)  # Background color
+        screen.fill(gs.COLOR_BACKGROUND)  # Background color
         plate.view_plate_2p(screen, game_plate, player1_position, player2_position, enemy_positions, player1_live, player2_live)
 
         # Victory conditions

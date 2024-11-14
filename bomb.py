@@ -44,8 +44,8 @@ def update_bombs(screen, board, enemy_positions, player_position, board_height, 
 
     for bomb in bombs:  # Draws all active bombs on the screen
         x, y = bomb["position"]
-        rect = (y * gs.TAILLE_CASE, x * gs.TAILLE_CASE, gs.TAILLE_CASE, gs.TAILLE_CASE)
-        pygame.draw.rect(screen, gs.COULEUR_BOMB, rect)
+        rect = (y * gs.CELL_SIZE, x * gs.CELL_SIZE, gs.CELL_SIZE, gs.CELL_SIZE)
+        pygame.draw.rect(screen, gs.COLOR_BOMB, rect)
     return player_hit
 
 

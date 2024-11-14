@@ -14,7 +14,7 @@ pygame.init()
 '''
 Configuration de la fenêtre
 '''
-screen = pygame.display.set_mode((gs.TAILLE_FENETRE, gs.TAILLE_FENETRE), pygame.RESIZABLE)
+screen = pygame.display.set_mode((gs.WINDOW_SIZE, gs.WINDOW_SIZE), pygame.RESIZABLE)
 
 
 '''
@@ -32,18 +32,18 @@ def draw_menu(title, options):
 
         # Afficher le titre du menu
         title_text = font.render(title, True, BLACK)
-        screen.blit(title_text, (gs.TAILLE_FENETRE // 2 - title_text.get_width() // 2, 50))
+        screen.blit(title_text, (gs.WINDOW_SIZE // 2 - title_text.get_width() // 2, 50))
 
         # Afficher chaque option
         for i, option in enumerate(options):
             if option == " ":
                 continue  # Ignore une option vide " "
             if i == selected_option:
-                color = gs.SELECTED
+                color = gs.MENU_SELECTED
             else:
                 color = BLACK
             option_text = font.render(option, True, color)
-            screen.blit(option_text, (gs.TAILLE_FENETRE // 2 - option_text.get_width() // 2, 150 + i * 40))
+            screen.blit(option_text, (gs.WINDOW_SIZE // 2 - option_text.get_width() // 2, 150 + i * 40))
 
         pygame.display.flip()
 
@@ -67,13 +67,13 @@ def draw_menu(title, options):
 def show_scores():
     screen.fill(WHITE)
     title = font.render("- Meilleurs Scores (Solo uniquement) -", True, BLACK)
-    screen.blit(title, (gs.TAILLE_FENETRE // 2 - title.get_width() // 2, 50))
+    screen.blit(title, (gs.WINDOW_SIZE // 2 - title.get_width() // 2, 50))
 
     # Affiche les meilleurs scores depuis la base de données
     top_scores = db.get_top_player_scores()
     for i, (name, score) in enumerate(top_scores, start=1):
         score_text = font.render(f"{i}. {name} - {score} points", True, BLACK)
-        screen.blit(score_text, (gs.TAILLE_FENETRE // 2 - score_text.get_width() // 2, 100 + i * 30))
+        screen.blit(score_text, (gs.WINDOW_SIZE // 2 - score_text.get_width() // 2, 100 + i * 30))
 
     pygame.display.flip()
 
@@ -165,26 +165,26 @@ def size_menu():
 
         # Afficher les instructions
         title_text = font.render("- Taille du plateau -", True, BLACK)
-        screen.blit(title_text, (gs.TAILLE_FENETRE // 2 - title_text.get_width() // 2, 50))
+        screen.blit(title_text, (gs.WINDOW_SIZE // 2 - title_text.get_width() // 2, 50))
 
         # Afficher les options Lignes et Colonnes sur la même ligne avec espace
-        line_color = gs.SELECTED if selected == "lines" else BLACK
-        column_color = gs.SELECTED if selected == "columns" else BLACK
+        line_color = gs.MENU_SELECTED if selected == "lines" else BLACK
+        column_color = gs.MENU_SELECTED if selected == "columns" else BLACK
 
         # Rendu des textes
         line_text = font.render(f"Lignes: {nb_line}", True, line_color)
         column_text = font.render(f"Colonnes: {nb_column}", True, column_color)
 
         # Positionnement pour un affichage côte à côte
-        line_text_x = (gs.TAILLE_FENETRE // 2) - line_text.get_width() - 20
-        column_text_x = (gs.TAILLE_FENETRE // 2) + 20
+        line_text_x = (gs.WINDOW_SIZE // 2) - line_text.get_width() - 20
+        column_text_x = (gs.WINDOW_SIZE // 2) + 20
 
         screen.blit(line_text, (line_text_x, 150))
         screen.blit(column_text, (column_text_x, 150))
 
         # Afficher le texte d'instructions
         instructions_text = font.render("[Enter] pour valider la saisie", True, BLACK)
-        screen.blit(instructions_text, (gs.TAILLE_FENETRE // 2 - instructions_text.get_width() // 2, 300))
+        screen.blit(instructions_text, (gs.WINDOW_SIZE // 2 - instructions_text.get_width() // 2, 300))
 
         pygame.display.flip()
 
