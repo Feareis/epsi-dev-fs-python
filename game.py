@@ -1,140 +1,155 @@
+import time
+import pygame
+
+# Import custom modules for game functionalities
 import menu
 import plate
 import player
 import bomb
-import pygame
-import game_settings as gs
-import time
 import db
+import game_settings as gs
 
-
-# Temps maximum de jeu
+# Set the maximum game time using the constant from game settings
 max_game_time = gs.MAX_GAME_TIME
 
 
-def get_remaining_time(start_time):
-    elapsed_time = time.time() - start_time
-    return max(0, int(max_game_time - elapsed_time))
+def get_remaining_time(start_time, max_time):
+    """
+    Calculates the remaining game time based on the start time.
+
+    :param start_time: The start time of the game (in seconds since epoch).
+    :param max_time: The maximum allowed game time in seconds.
+    :return: The remaining time in seconds as an integer, or 0 if the time has elapsed.
+    """
+    elapsed_time = time.time() - start_time  # Calculate the elapsed time since the game started
+    return max(0, int(max_time - elapsed_time))  # Calculate remaining time and ensure it doesn't go below zero
 
 
 def run_game(load_saved=False):
-    pygame.init()  # Initialisation de la bibliothèque Pygame
-
-
     """
-    Initialisation des paramètres de la fenêtres
+    Main function to initialize and run the game loop.
+
+    :param load_saved: Boolean indicating if a saved game state should be loaded (default is False).
+    :return: None
     """
+
+    # --- Pygame initialization and window settings ---
+    pygame.init()
     screen = pygame.display.set_mode((gs.TAILLE_FENETRE, gs.TAILLE_FENETRE), pygame.RESIZABLE)
-    pygame.display.set_caption("Bomberman")  # Titre de la fenêtre du jeu
-    font = pygame.font.Font(None, 36)  # Définir la police d'affichage pour le score
+    pygame.display.set_caption("Bomberman")  # Game window title
+    font = pygame.font.Font(None, 36)  # Font for displaying score and time
 
-
-    """
-    Initialisation des db
-    """
+    # --- Database initialization ---
     db.initialize_scores_db()
     db.initialize_game_db()
 
-
-    """
-    Paramètres du jeu
-    """
+    # --- Game parameters and board setup ---
     if load_saved:
         loaded_game = db.load_game()
         if loaded_game:
-            player_position, foes, score, nb_line, nb_column, game_plate = loaded_game
+            player_position, enemy_positions, score, board_height, board_width, board = loaded_game
         else:
-            return
+            return  # End if no saved game is found
     else:
-        nb_line, nb_column = menu.size_menu() # Dimensions du plateau de jeu (nombre de lignes et de colonnes)
-        foes = gs.INITIAL_FOES_POSITIONS  # Positions des ennemis sur le plateau
-        # game_plate = plate.starting_plate(nb_line, nb_column, bricks=[(0, 4), (4, 6), (11, 13), (2, 7), (2, 7)])  # Création du plateau de jeu fixe
-        game_plate = plate.random_plate(nb_line, nb_column)  # Plateau random avec ratio
-        player_position = gs.STARTING_PLAYER1_POSITION  # Position initiale du joueur
-        score = 1000  # Le joueur 1 commence avec 1000 points
+        board_height, board_width = menu.size_menu() # Board dimensions (number of rows and columns)
+        enemy_positions = gs.INITIAL_FOES_POSITIONS  # Initial enemy positions
+        board = plate.random_plate(board_height, board_width)  # Random game board
+        player_position = gs.STARTING_PLAYER1_POSITION  # Initial player position
+        score = 1000  # Initial player score
 
-    start_time = time.time()  # Temps de démarrage
+    # --- Timing parameters ---
+    start_time = time.time()  # Game start time
+    score_decrement = 1  # Score decrement per move
+    enemy_move_delay = 1000  # Delay in milliseconds for enemy movement
+    last_enemy_move_time = pygame.time.get_ticks()  # Last enemy movement tick initialization
 
-    dscore = 1  # décrémentation de score
-    foes_move_delay = 1000  # Délai entre les déplacements des ennemis (ms)
-    last_foe_move_time = pygame.time.get_ticks()  # Initialisation du tick de deplacement (temps écoulé depuis le dernier mouvement)
-
-
-    """
-    Boucle de jeu
-    """
+    # --- Main game loop ---
     run = True
     while run:
-        for event in pygame.event.get():  # Gestion des événements de Pygame (fermeture de la fenêtre et appui sur les touches)
+        # --- Pygame event handling ---
+        for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False  # Quitte la boucle si l'événement de fermeture est détecté
-            elif event.type == pygame.KEYDOWN:  # Gestion des mouvements du joueur en fonction de la touche appuyée
+                run = False  # Exit loop if the window is closed
+
+            elif event.type == pygame.KEYDOWN:
+                # Pause menu and options
                 if event.key == pygame.K_ESCAPE:
                     choice = menu.pause_menu()
+
                     if choice == "Reprendre":
-                        continue
+                        continue  # Continue game without changes
                     elif choice == "Sauvegarder la partie":
-                        db.save_single_game_state(player_position, foes, score, nb_line, nb_column, game_plate, remaining_time)
-                        run = False
+                        db.save_single_game_state(player_position, enemy_positions, score, board_height, board_width, board)
+                        run = False  # Exit after saving
                     elif choice == "Options":
                         menu.options_menu(game_mode="game")
                     elif choice == "Menu principal":
-                        run = False  # Quitte la partie pour revenir au menu principal sans sauvegarde
+                        run = False  # Exit to the main menu without saving
 
-
+                # Player movement
                 elif event.key in [pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d]:
-                    direction = event.unicode
-                    player_position = player.move_player(player_position, direction, game_plate)
-                    score -= dscore
-                elif event.key == pygame.K_b:
-                    bomb.add_bomb(player_position)
+                    direction = event.unicode  # Get the direction from key press
+                    new_position = player.move_player(player_position, direction, board)
 
-        if player.check_player_collision(player_position, foes):  # Vérifie si le joueur entre en collision avec un ennemi ou l'inverse
-            print("Perdu !")
+                    # Verify that move_player returns a valid position before updating
+                    if new_position:
+                        player_position = new_position
+                        score -= score_decrement  # Decrease score with each move
+
+                # Place a bomb
+                elif event.key == pygame.K_b:
+                    bomb.add_bomb(player_position)  # Place a bomb at the player's position
+
+        # --- Collision checks and game-over conditions ---
+        if player.check_player_collision(player_position, enemy_positions):
+            print("Défaite !")
             run = False
 
-        # Vérifie si le délai de déplacement des ennemis est écoulé
+        # --- Enemy movement after delay ---
         ct = pygame.time.get_ticks()
-        if ct - last_foe_move_time > foes_move_delay:  # si (temps actuel - dernier mouvement > delai de mouvement enemi)
-            foes = player.update_foes_positions(player_position, foes, game_plate)  # Met à jour toute les positions ennemis
-            last_foe_move_time = ct  # Met à jour le dernier moment de déplacement des ennemis
-
-            if player.check_player_collision(player_position, foes):  # Vérifie si le joueur entre en collision avec un ennemi ou l'inverse
-                print("Perdu !")
+        if ct - last_enemy_move_time > enemy_move_delay:
+            enemy_positions = player.update_foes_positions(player_position, enemy_positions, board)
+            last_enemy_move_time = ct
+            if player.check_player_collision(player_position, enemy_positions):
+                print("Défaite !")
                 run = False
 
-        # Dessine le plateau et les éléments
-        screen.fill(gs.COULEUR_FOND)  # couleurs background
-        plate.view_plate(screen, game_plate, player_position, foes)  # Dessine le plateau de jeu et les éléments (joueur, ennemis, murs) à l'écran
+        # --- Drawing the board elements ---
+        screen.fill(gs.COULEUR_FOND)  # Background color
+        plate.view_plate(screen, board, player_position, enemy_positions)  # Draw the game board with player and enemies
 
-        if not foes:
-            print("Gagné !")  # Si il n'y a plus d'ennemis, la partie est gagné
+        # --- Victory condition ---
+        if not enemy_positions:
+            print("Victoire !")
             db.end_game_and_save_score(score)
             run = False
 
-        # Temps
-        remaining_time = get_remaining_time(start_time)
-
+        # --- Remaining time management ---
+        remaining_time = get_remaining_time(start_time, max_game_time)
         if remaining_time <= 0:
-            print("Temps écoulé !")
+            print("Défaite !")
             run = False
-        minutes, seconds = divmod(remaining_time, 60)  # Formate le temps restant en minutes et secondes
+        minutes, seconds = divmod(remaining_time, 60)  # Convert remaining time to minutes and seconds
 
-        # Affichage du temps en haut à droite
+        # Display remaining time at the top right
         time_display = font.render(f"Temps : {minutes:02d}:{seconds:02d}", True, gs.BLACK)
         screen.blit(time_display, ((gs.TAILLE_FENETRE // 2) + 20, 10))
 
-        # Score
+        # --- Display score ---
         if score > 0:
-            score_text = font.render(f"Score: {score}", True, gs.BLACK)  # affiche le score en cours
-            screen.blit(score_text, (10, 10))  # destination d'affichage -> top left
+            score_text = font.render(f"Score: {score}", True, gs.BLACK)
+            screen.blit(score_text, (10, 10))  # Display at the top left
         else:
-            print("Perdu !")  # Si le score tombe à 0, la partie est perdue
+            print("Défaite !")
             run = False
 
-        # Met à jour les bombes, gère leur affichage et leur explosion
-        if bomb.update_bombs(screen, game_plate, foes, player_position, nb_line, nb_column):
-            print("Perdu !")
+        # --- Bomb handling ---
+        if bomb.update_bombs(screen, board, enemy_positions, player_position, board_height, board_width):
+            print("Défaite !")
             run = False
 
-        pygame.display.flip()  # Met à jour l'affichage de Pygame pour montrer les éléments récemment dessinés
+        # --- Update Pygame display ---
+        pygame.display.flip()
+
+    # --- Clean up resources after the game loop ---
+    pygame.quit()  # Clean up Pygame resources
