@@ -98,6 +98,19 @@ def move_foe(player_position, foe_position, plate):
     return foe_position
 
 
+def update_foes_positions(player_position, foes, plate):
+    foes_positions = []
+    busy_position = set(foes)  # Gère les doublons
+    for foe_position in foes:
+        nw_foe_position = move_foe(player_position, foe_position, plate)
+        if nw_foe_position in busy_position:  # Si la position est occupée, on bouge pas
+            foes_positions.append(foe_position)
+        else:  # Sinon on met à jour la position de l'ennemi
+            foes_positions.append(nw_foe_position)
+            busy_position.add(nw_foe_position)
+    return foes_positions
+
+
 def move_foe_2p(player1_position, player2_position, foe_position, plate, player1_live, player2_live):
     if player1_live and player2_live:
         de_p1 = distance_euclidienne(player1_position, foe_position)
@@ -150,11 +163,16 @@ def move_foe_2p(player1_position, player2_position, foe_position, plate, player1
     return foe_position
 
 
-def update_foes_positions(player1_position, player2_position, foes, plate, player1_live, player2_live):
+def update_foes_positions_2p(player1_position, player2_position, foes, plate, player1_live, player2_live):
     foes_positions = []
+    busy_position = set(foes)  # Gère les doublons
     for foe_position in foes:
         nw_foe_position = move_foe_2p(player1_position, player2_position, foe_position, plate, player1_live, player2_live)
-        foes_positions.append(nw_foe_position)
+        if nw_foe_position in busy_position:  # Si la position est occupée, on bouge pas
+            foes_positions.append(foe_position)
+        else:  # Sinon on met à jour la position de l'ennemi
+            foes_positions.append(nw_foe_position)
+            busy_position.add(nw_foe_position)
     return foes_positions
 
 
