@@ -1,55 +1,44 @@
-"""
-Couleurs
-"""
-WHITE = (255, 255, 255)          # Blanc
-BLACK = (0, 0, 0)                # Noir
-RED = (255, 0, 0)                # Rouge
-GREEN = (0, 255, 0)              # Vert
-BLUE = (0, 0, 255)               # Bleu
-YELLOW = (255, 255, 0)           # Jaune
+# --- Colors ---
+WHITE = (255, 255, 255)          # White
+BLACK = (0, 0, 0)                # Black
+RED = (255, 0, 0)                # Red
+GREEN = (0, 255, 0)              # Green
+BLUE = (0, 0, 255)               # Blue
+YELLOW = (255, 255, 0)           # Yellow
 ORANGE = (255, 165, 0)           # Orange
-PURPLE = (128, 0, 128)           # Violet
-PINK = (255, 192, 203)           # Rose
-BROWN = (139, 69, 19)            # Marron
-GRAY = (128, 128, 128)           # Gris
-DARK_GRAY = (64, 64, 64)         # Gris foncé
-LIGHT_GRAY = (192, 192, 192)     # Gris clair
-GOLD = (255, 215, 0)             # Or
+PURPLE = (128, 0, 128)           # Purple
+PINK = (255, 192, 203)           # Pink
+BROWN = (139, 69, 19)            # Brown
+GRAY = (128, 128, 128)           # Gray
+DARK_GRAY = (64, 64, 64)         # Dark Gray
+LIGHT_GRAY = (192, 192, 192)     # Light Gray
+GOLD = (255, 215, 0)             # Gold
 
-COULEUR_CASE_VIDE = WHITE
-COULEUR_CASE_INDESTRUCTIBLE = GRAY
-COULEUR_BRIQUE_CASSABLE = BROWN
-COULEUR_JOUEUR1 = GREEN
-COULEUR_JOUEUR2 = BLUE
-COULEUR_ENNEMI = RED
-COULEUR_FOND = WHITE
-COULEUR_BOMB = YELLOW
-
-# Menu
-SELECTED = BLUE
+# Specific game colors assigned to game elements
+COLOR_EMPTY_CELL = WHITE
+COLOR_INDESTRUCTIBLE_BLOCK = GRAY
+COLOR_BREAKABLE_BRICK = BROWN
+COLOR_PLAYER1 = GREEN
+COLOR_PLAYER2 = BLUE
+COLOR_ENEMY = RED
+COLOR_BACKGROUND = WHITE
+COLOR_BOMB = YELLOW
 
 
-"""
-Case Size
-"""
-TAILLE_CASE = 45  # Taille des cases du plateau
+# --- Menu highlight ---
+MENU_SELECTED = BLUE
 
 
-"""
-Windows Size
-"""
-TAILLE_FENETRE = TAILLE_CASE * 13
+# --- Game Board Configuration ---
+CELL_SIZE = 45  # Size of each cell on the game board
+WINDOW_SIZE = CELL_SIZE * 13  # Window size based on the cell size and board dimensions
 
 
-"""
-Position
-"""
-INITIAL_FOES_POSITIONS = [(4, 5), (5, 6), (9, 8), (3, 10)]
-STARTING_PLAYER1_POSITION = (0, 0)
-STARTING_PLAYER2_POSITION = (12, 12)
+# --- Initial Positions ---
+INITIAL_ENEMY_POSITIONS = [(4, 5), (5, 6), (9, 8), (3, 10)]  # Starting positions for enemies
+STARTING_PLAYER1_POSITION = (0, 0)  # Starting position for player 1
+STARTING_PLAYER2_POSITION = (12, 12)  # Starting position for player 2
 
 
-"""
-Autre
-"""
-MAX_GAME_TIME = 600
+# --- Game Timing ---
+MAX_GAME_TIME = 600  # Maximum game duration in seconds
