@@ -74,7 +74,7 @@ def run_game(load_saved=False):
                     if choice == "Reprendre":
                         continue
                     elif choice == "Sauvegarder la partie":
-                        db.save_game(player_position, foes, score, nb_line, nb_column, game_plate, remaining_time)
+                        db.save_single_game_state(player_position, foes, score, nb_line, nb_column, game_plate, remaining_time)
                         run = False
                     elif choice == "Options":
                         menu.options_menu(game_mode="game")
@@ -109,7 +109,7 @@ def run_game(load_saved=False):
 
         if not foes:
             print("Gagné !")  # Si il n'y a plus d'ennemis, la partie est gagné
-            db.game_end(score)
+            db.end_game_and_save_score(score)
             run = False
 
         # Temps

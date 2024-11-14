@@ -70,7 +70,7 @@ def show_scores():
     screen.blit(title, (gs.TAILLE_FENETRE // 2 - title.get_width() // 2, 50))
 
     # Affiche les meilleurs scores depuis la base de données
-    top_scores = db.get_top_scores()
+    top_scores = db.get_top_player_scores()
     for i, (name, score) in enumerate(top_scores, start=1):
         score_text = font.render(f"{i}. {name} - {score} points", True, BLACK)
         screen.blit(score_text, (gs.TAILLE_FENETRE // 2 - score_text.get_width() // 2, 100 + i * 30))
