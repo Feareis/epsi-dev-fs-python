@@ -66,32 +66,32 @@ def run_game_2p():
 
                 # Déplacements du Joueur 1
                 if keys[pygame.K_z]:
-                    player1_position = player.move_player(player1_position, "z", game_plate)
+                    player1_position = player.move_player(player1_position, "z", game_plate, 1, player2_position=player2_position)
                     score_j1 -= dscore
                 elif keys[pygame.K_s]:
-                    player1_position = player.move_player(player1_position, "s", game_plate)
+                    player1_position = player.move_player(player1_position, "s", game_plate, 1, player2_position=player2_position)
                     score_j1 -= dscore
                 elif keys[pygame.K_q]:
-                    player1_position = player.move_player(player1_position, "q", game_plate)
+                    player1_position = player.move_player(player1_position, "q", game_plate, 1, player2_position=player2_position)
                     score_j1 -= dscore
                 elif keys[pygame.K_d]:
-                    player1_position = player.move_player(player1_position, "d", game_plate)
+                    player1_position = player.move_player(player1_position, "d", game_plate, 1, player2_position=player2_position)
                     score_j1 -= dscore
                 if keys[pygame.K_e]:
                     bomb.add_bomb(player1_position)
 
                 # Déplacements du Joueur 2
                 if keys[pygame.K_o]:
-                    player2_position = player.move_player(player2_position, "o", game_plate, 2)
+                    player2_position = player.move_player(player2_position, "o", game_plate, 2, player2_position=player1_position)
                     score_j2 -= dscore
                 elif keys[pygame.K_l]:
-                    player2_position = player.move_player(player2_position, "l", game_plate, 2)
+                    player2_position = player.move_player(player2_position, "l", game_plate, 2, player2_position=player1_position)
                     score_j2 -= dscore
                 elif keys[pygame.K_k]:
-                    player2_position = player.move_player(player2_position, "k", game_plate, 2)
+                    player2_position = player.move_player(player2_position, "k", game_plate, 2, player2_position=player1_position)
                     score_j2 -= dscore
                 elif keys[pygame.K_m]:
-                    player2_position = player.move_player(player2_position, "m", game_plate, 2)
+                    player2_position = player.move_player(player2_position, "m", game_plate, 2, player2_position=player1_position)
                     score_j2 -= dscore
                 if keys[pygame.K_i]:
                     bomb.add_bomb(player2_position)

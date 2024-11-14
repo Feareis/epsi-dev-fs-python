@@ -23,7 +23,7 @@ def move_player(player_position, direction, plate, player_number=None, player2_p
     x, y = player_position
 
     # Choisir le dictionnaire de mouvements en fonction du joueur
-    if player_number is None:
+    if player_number is None or player_number == 1:
         moves = move
     else:
         moves = moves_p2
