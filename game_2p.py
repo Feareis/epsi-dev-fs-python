@@ -69,11 +69,11 @@ def run_game_2p():
             elif event.type == pygame.KEYDOWN:
                 # Pause menu
                 if event.key == pygame.K_ESCAPE:
-                    choice = menu.pause_2p_menu()
+                    choice = menu.display_2p_pause_menu()
                     if choice == "Resume":
                         continue
                     elif choice == "Options":
-                        menu.options_menu(game_mode="game_2p")
+                        menu.display_options_menu(game_mode="game_2p")
                     elif choice == "Main Menu":
                         run = False  # Exit to main menu without saving
 

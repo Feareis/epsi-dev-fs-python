@@ -51,7 +51,7 @@ def run_game(load_saved=False):
         else:
             return  # End if no saved game is found
     else:
-        board_height, board_width = menu.size_menu() # Board dimensions (number of rows and columns)
+        board_height, board_width = menu.display_size_menu() # Board dimensions (number of rows and columns)
         enemy_positions = gs.INITIAL_ENEMY_POSITIONS  # Initial enemy positions
         board = plate.random_plate(board_height, board_width)  # Random game board
         player_position = gs.STARTING_PLAYER1_POSITION  # Initial player position
@@ -74,7 +74,7 @@ def run_game(load_saved=False):
             elif event.type == pygame.KEYDOWN:
                 # Pause menu and options
                 if event.key == pygame.K_ESCAPE:
-                    choice = menu.pause_menu()
+                    choice = menu.display_1p_pause_menu()
 
                     if choice == "Resume":
                         continue  # Continue game without changes
@@ -82,7 +82,7 @@ def run_game(load_saved=False):
                         db.save_single_game_state(player_position, enemy_positions, score, board_height, board_width, board)
                         run = False  # Exit after saving
                     elif choice == "Options":
-                        menu.options_menu(game_mode="game")
+                        menu.display_options_menu(game_mode="game")
                     elif choice == "Main Menu":
                         run = False  # Exit to the main menu without saving
 

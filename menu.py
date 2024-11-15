@@ -1,83 +1,98 @@
 import pygame
 import sys
+
+# Import custom modules for game functionalities
 import game
 import game_2p
 import db
 import game_settings as gs
 
-'''
-Initialisation de Pygame
-'''
+
+# --- Pygame Initialization and Configuration ---
 pygame.init()
-
-
-'''
-Configuration de la fenêtre
-'''
 screen = pygame.display.set_mode((gs.WINDOW_SIZE, gs.WINDOW_SIZE), pygame.RESIZABLE)
-
-
-'''
-Configuration des couleurs et fonts
-'''
 WHITE = gs.WHITE
 BLACK = gs.BLACK
 font = pygame.font.Font(None, 36)
 
 
-def draw_menu(title, options):
-    selected_option = 0
-    while True:
-        screen.fill(WHITE)
+# --- Menu Functions ---
+def display_menu(title, options):
+    """
+    Displays a menu with a title and a list of selectable options, allowing
+    the user to navigate through options with UP and DOWN keys and select with ENTER.
 
-        # Afficher le titre du menu
+    :param title: The title displayed at the top of the menu (str).
+    :param options: A list of menu options (str) to display. Use a single space " " for empty options.
+    :return: The selected option as a string when ENTER is pressed.
+    """
+    selected_option = 0
+
+    def get_next_valid_option(current, direction):
+        """
+        Adjusts the selection index to skip over empty options.
+
+        :param current: The current index of the selection (int).
+        :param direction: The direction to move in the options list (int, 1 for down, -1 for up).
+        :return: The adjusted index pointing to a non-empty option (int).
+        """
+        while options[current] == " ":
+            current = (current + direction) % len(options)
+        return current
+
+    while True:
+        # Clear screen and render title
+        screen.fill(WHITE)
         title_text = font.render(title, True, BLACK)
         screen.blit(title_text, (gs.WINDOW_SIZE // 2 - title_text.get_width() // 2, 50))
 
-        # Afficher chaque option
+        # Render each menu option
         for i, option in enumerate(options):
             if option == " ":
-                continue  # Ignore une option vide " "
-            if i == selected_option:
-                color = gs.MENU_SELECTED
-            else:
-                color = BLACK
+                continue  # Skip empty options
+            color = gs.MENU_SELECTED if i == selected_option else BLACK
             option_text = font.render(option, True, color)
             screen.blit(option_text, (gs.WINDOW_SIZE // 2 - option_text.get_width() // 2, 150 + i * 40))
 
         pygame.display.flip()
 
-        # Gestion des événements
+        # Event handling for menu navigation
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    selected_option = (selected_option - 1) % len(options)
-                    while options[selected_option] == " ":
-                        selected_option = (selected_option - 1) % len(options)
+                    selected_option = get_next_valid_option((selected_option - 1) % len(options), -1)
                 elif event.key == pygame.K_DOWN:
-                    selected_option = (selected_option + 1) % len(options)
-                    while options[selected_option] == " ":
-                        selected_option = (selected_option + 1) % len(options)
+                    selected_option = get_next_valid_option((selected_option + 1) % len(options), 1)
                 elif event.key == pygame.K_RETURN:
-                    return options[selected_option]  # Retourne l'option sélectionnée
+                    return options[selected_option]  # Return the selected option
 
-def show_scores():
+
+def display_high_scores():
+    """
+    Displays the top high scores from the database on the screen.
+    Allows the user to return to the main menu by pressing any key.
+
+    :return: None
+    """
     screen.fill(WHITE)
-    title = font.render("- Meilleurs Scores (Solo uniquement) -", True, BLACK)
+
+    # Render the title for the scores display
+    title = font.render("- High Scores (Solo Only) -", True, BLACK)
     screen.blit(title, (gs.WINDOW_SIZE // 2 - title.get_width() // 2, 50))
 
-    # Affiche les meilleurs scores depuis la base de données
+    # Fetch and display top scores from the database
     top_scores = db.get_top_player_scores()
     for i, (name, score) in enumerate(top_scores, start=1):
         score_text = font.render(f"{i}. {name} - {score} points", True, BLACK)
-        screen.blit(score_text, (gs.WINDOW_SIZE // 2 - score_text.get_width() // 2, 100 + i * 30))
+        y_position = 100 + i * 30
+        screen.blit(score_text, (gs.WINDOW_SIZE // 2 - score_text.get_width() // 2, y_position))
 
     pygame.display.flip()
 
-    # appui sur une touche pour revenir au menu
+    # Wait for any key press to return to the main menu
     waiting = True
     while waiting:
         for event in pygame.event.get():
@@ -85,135 +100,211 @@ def show_scores():
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                waiting = False  # Quitte l'affichage des scores si une touche est pressée
+                waiting = False  # Exit scores display on any key press
+
 
 def display_main_menu():
-    options = ["Nouvelle Partie", "Charger une partie", "Meilleurs Scores", "Options", " ", "Quitter"]
+    """
+    Displays the main menu and handles user selections.
+
+    The options include:
+    - "New game": Opens the new game menu
+    - "Load game": Opens the load game menu
+    - "Top scores": Displays the high scores
+    - "Options": Opens the options menu (if available)
+    - "Exit": Exits the game
+
+    :return: None
+    """
     while True:
-        choice = draw_menu("- Menu -", options)
-        if choice == "Nouvelle Partie":
-            new_game_menu()  # Envoie vers le menu nouvelle partie
-        elif choice == "Charger une partie":
-            load_game_menu()  # Affiche le menu de restauration d'une partie solo
-        elif choice == "Meilleurs Scores":
-            show_scores()  # Affiche les scores
-        elif choice == "Options":
-            options_menu()  # Affiche les options (non utilisable)
-        elif choice == "Quitter":
-            pygame.quit()  # Ferme la fenêtre
-            sys.exit()
+        choice = display_menu("- Menu -", gs.MAIN_MENU_OPTIONS)
+        if choice == gs.MENU_NEW_GAME_OPTION:
+            display_new_game_menu()  # Redirects to the new game menu
+        elif choice == gs.MENU_LOAD_GAME_OPTION:
+            display_load_game_menu()  # Opens the load game menu
+        elif choice == gs.MENU_HIGH_SCORES_OPTION:
+            display_high_scores()  # Displays high scores
+        elif choice == gs.MENU_OPTIONS_OPTION:
+            display_options_menu()  # Opens options menu
+        elif choice == gs.MENU_QUIT_OPTION:
+            quit_game()  # Cleanly exits the game
 
 
-def pause_menu():
-    options = ["Reprendre", "Sauvegarder la partie", "Options", " ", "Menu principal"]
-    return draw_menu("- Pause -", options)
+def quit_game():
+    """
+    Exits Pygame and closes the program.
+
+    :return: None
+    """
+    pygame.quit()
+    sys.exit()
 
 
-def pause_2p_menu():
-    options = ["Reprendre", "Options", " ", "Menu principal"]
-    return draw_menu("- Pause -", options)
+def display_1p_pause_menu():
+    """
+    Displays the pause menu for single-player mode and allows the player to choose an action.
+
+    The options include:
+    - Resume: Continues the current game.
+    - Save game: Saves the current game state.
+    - Options: Opens the game options menu.
+    - Main Menu: Returns to the main menu, exiting the current game.
+
+    :return: The selected option as a string.
+    """
+    return display_menu("- Pause -", gs.SOLO_PAUSE_MENU)
 
 
-def new_game_menu():
-    options = ["Solo", "Multi", " ", "Menu principale"]
-    choice = draw_menu("- Nouvelle Partie -", options)
-    if choice == "Solo":
+def display_2p_pause_menu():
+    """
+    Displays the pause menu for multiplayer mode, allowing players to choose an action.
+
+    The options include:
+    - Resume: Continues the multiplayer game.
+    - Options: Opens the options menu (e.g., for keybindings).
+    - Main Menu: Returns to the main menu, ending the current multiplayer session.
+
+    :return: The selected option as a string.
+    """
+    return display_menu("- Pause -", gs.MULTI_PAUSE_MENU)
+
+
+def display_new_game_menu():
+    """
+    Displays the "New Game" menu, allowing the player to choose between single-player and multiplayer modes.
+
+    The options include:
+    - Solo player game: Starts a new single-player game.
+    - Multi player game: Starts a new multiplayer game.
+    - Main Menu: Returns to the main menu without starting a new game.
+
+    :return: None
+    """
+    choice = display_menu("- New Game -", gs.NEW_GAME_MENU)
+    if choice == gs.MENU_SOLO_PLAYER_GAME:
         game.run_game()
-    elif choice == "Multi":
-        game_2p.run_game_2p()  # Utilise le module multi-joueur
-    elif choice == "Menu principale":
-        return  # Retourne au menu principal sans action supplémentaire
-
-def load_game_menu():
-    options = ["Charger une partie - Solo", " ", "Menu principale"]
-    choice = draw_menu("- Charger une partie -", options)
-
-    if choice == "Charger une partie - Solo":
-        game.run_game(load_saved=True)
-    elif choice == "Menu principale":
-        return  # Retourne au menu principal sans faire d'actions supplémentaires
+    elif choice == gs.MENU_MULTI_PLAYER_GAME:
+        game_2p.run_game_2p()  # Launches the multiplayer module
+    elif choice == gs.MENU_MAIN_MENU_OPTION:
+        return  # Returns to the main menu without starting a new game
 
 
-def options_menu(game_mode="game"):
-    options = ["Langues", "Keybinds", " ", "Retour"]
-    choice = draw_menu("- Options -", options)
+def display_load_game_menu():
+    """
+    Displays the "Load Game" menu, allowing the player to load a previously saved game.
 
-    if choice == "Langues":
-        print("Langue")
-    elif choice == "Touche":
-        print("Keybinds")
-    elif choice == "Retour":
-        # Retourne au bon menu de pause en fonction du mode de jeu
+    The options include:
+    - Solo - Load game: Loads a saved single-player game.
+    - Main Menu: Returns to the main menu without loading a game.
+
+    :return: None
+    """
+    choice = display_menu("- Load Game -", gs.LOAD_GAME_MENU)
+
+    if choice == gs.MENU_LOAD_SOLO_PLAYER_GAME:
+        game.run_game(load_saved=True)  # Loads a saved single-player game
+    elif choice == gs.MENU_MAIN_MENU_OPTION:
+        return  # Returns to the main menu without starting a new game
+
+
+def display_options_menu(game_mode="game"):
+    """
+    Displays the options menu, allowing the player to configure settings such as language and keybindings.
+
+    The options include:
+    - Language: Opens the language settings (not yet implemented).
+    - Keybindings: Opens the keybinding configuration (not yet implemented).
+    - Back: Returns to the appropriate pause menu based on the game mode (single-player or multiplayer).
+
+    :param game_mode: Specifies the game mode context ("game" for single-player or "game_2p" for multiplayer),
+                      to return to the correct pause menu.
+    :return: None
+    """
+    choice = display_menu("- Options -", gs.OPTION_MENU)
+
+    if choice == gs.MENU_LANGUAGES_OPTION:
+        print("Langue")  # Placeholder for language settings
+    elif choice == gs.MENU_KEYBINDING_OPTION:
+        print("Keybinds")  # Placeholder for keybinding settings
+    elif choice == gs.MENU_BACK_OPTION:
+        # Returns to the appropriate pause menu based on the game mode
         if game_mode == "game":
-            return pause_menu()  # Retourne au menu pause de game
+            return display_1p_pause_menu()  # Returns to the single-player pause menu
         elif game_mode == "game_2p":
-            return pause_2p_menu()  # Retourne au menu pause de game_2p
+            return display_2p_pause_menu()  # Returns to the multiplayer pause menu
 
 
-def size_menu():
-    # Initialisation de Pygame
+def display_size_menu():
+    """
+    Displays the size selection menu for the game board, allowing the player to adjust
+    the number of rows (lines) and columns using arrow keys.
+
+    The options include:
+    - UP/DOWN arrows: Increase or decrease the number of rows or columns, depending on the selection.
+    - LEFT/RIGHT arrows: Switch between adjusting rows (lines) or columns.
+    - ENTER: Confirm the selection and return the chosen board size.
+
+    :return: A tuple (board_height, board_width) representing the selected number of rows and columns.
+    """
+    # --- Pygame initialization and window settings ---
     pygame.init()
     pygame.display.set_caption("Bomberman")
 
-    # Paramètres de taille initiale
-    nb_line = 13
-    nb_column = 13
-    selected = "lines"  # Définit si on ajuste les lignes ou les colonnes
+    # Initial board size parameters
+    board_height, board_width = 13, 13
+    selected = gs.MENU_HEIGHT_OPTION  # Defines if adjusting rows or columns
 
     while True:
         screen.fill(WHITE)
 
-        # Afficher les instructions
-        title_text = font.render("- Taille du plateau -", True, BLACK)
+        # Display title
+        title_text = font.render("- Board Size -", True, BLACK)
         screen.blit(title_text, (gs.WINDOW_SIZE // 2 - title_text.get_width() // 2, 50))
 
-        # Afficher les options Lignes et Colonnes sur la même ligne avec espace
-        line_color = gs.MENU_SELECTED if selected == "lines" else BLACK
-        column_color = gs.MENU_SELECTED if selected == "columns" else BLACK
+        # Highlight colors for selection
+        height_color = gs.MENU_SELECTED if selected == gs.MENU_HEIGHT_OPTION else BLACK
+        width_color = gs.MENU_SELECTED if selected == gs.MENU_WIDTH_OPTION else BLACK
 
-        # Rendu des textes
-        line_text = font.render(f"Lignes: {nb_line}", True, line_color)
-        column_text = font.render(f"Colonnes: {nb_column}", True, column_color)
+        # Render lines and columns text with respective colors
+        line_text = font.render(f"Lines: {board_height}", True, height_color)
+        column_text = font.render(f"Columns: {board_width}", True, width_color)
 
-        # Positionnement pour un affichage côte à côte
+        # Position elements for side-by-side display
         line_text_x = (gs.WINDOW_SIZE // 2) - line_text.get_width() - 20
         column_text_x = (gs.WINDOW_SIZE // 2) + 20
 
         screen.blit(line_text, (line_text_x, 150))
         screen.blit(column_text, (column_text_x, 150))
 
-        # Afficher le texte d'instructions
-        instructions_text = font.render("[Enter] pour valider la saisie", True, BLACK)
+        # Display instructions
+        instructions_text = font.render("[Enter] to confirm your entry", True, BLACK)
         screen.blit(instructions_text, (gs.WINDOW_SIZE // 2 - instructions_text.get_width() // 2, 300))
 
         pygame.display.flip()
 
-        # Gestion des événements
+        # Event handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                # Ajuste le nombre de lignes ou de colonnes
+                # Adjust number of rows or columns
                 if event.key == pygame.K_UP:
-                    if selected == "lines":
-                        nb_line += 1
-                    elif selected == "columns":
-                        nb_column += 1
+                    if selected == gs.MENU_HEIGHT_OPTION:
+                        board_height += 1
+                    elif selected == gs.MENU_WIDTH_OPTION:
+                        board_width += 1
                 elif event.key == pygame.K_DOWN:
-                    if selected == "lines":
-                        nb_line -= 1
-                    elif selected == "columns":
-                        nb_column -= 1
+                    if selected == gs.MENU_HEIGHT_OPTION:
+                        board_height -= 1
+                    elif selected == gs.MENU_WIDTH_OPTION:
+                        board_width -= 1
                 elif event.key == pygame.K_RIGHT:
-                    if selected == "lines":
-                        selected = "columns"  # Passe à la sélection des colonnes
+                    selected = gs.MENU_WIDTH_OPTION if selected == gs.MENU_HEIGHT_OPTION else selected  # Switch to columns
                 elif event.key == pygame.K_LEFT:
-                    if selected == "columns":
-                        selected = "lines"  # Passe à la sélection des lignes
+                    selected = gs.MENU_HEIGHT_OPTION if selected == gs.MENU_WIDTH_OPTION else selected  # Switch to lines
                 elif event.key == pygame.K_RETURN:
-                    # Retourne la taille choisie une fois validée
-                    return nb_line, nb_column
+                    return board_height, board_width  # Return the selected board size
 
 
 if __name__ == "__main__":
