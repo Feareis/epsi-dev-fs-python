@@ -12,6 +12,9 @@ import game_settings as gs
 # Set the maximum game time using the constant from game settings
 max_game_time = gs.MAX_GAME_TIME
 
+# Setting the game mode to prevent return errors from the main menu
+game_mode = gs.MENU_GAME_MODE_2P_OPTION
+
 
 def get_remaining_time(start_time, max_time):
     """
@@ -73,7 +76,7 @@ def run_game_2p():
                     if choice == "Resume":
                         continue
                     elif choice == "Options":
-                        menu.display_options_menu(game_mode="game_2p")
+                        menu.display_options_menu(game_mode=game_mode)
                     elif choice == "Main Menu":
                         run = False  # Exit to main menu without saving
 

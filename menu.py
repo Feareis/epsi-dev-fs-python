@@ -212,7 +212,7 @@ def display_load_game_menu():
         return  # Returns to the main menu without starting a new game
 
 
-def display_options_menu(game_mode="game"):
+def display_options_menu(game_mode=None):
     """
     Displays the options menu, allowing the player to configure settings such as language and keybindings.
 
@@ -237,6 +237,8 @@ def display_options_menu(game_mode="game"):
             return display_1p_pause_menu()  # Returns to the single-player pause menu
         elif game_mode == "game_2p":
             return display_2p_pause_menu()  # Returns to the multiplayer pause menu
+        else:
+            return
 
 
 def display_size_menu():
