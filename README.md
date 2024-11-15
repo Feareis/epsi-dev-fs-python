@@ -24,7 +24,7 @@
 
 <br/>
 
-# <center> - Installation -
+# <center> - Installation - </center>
 
 First, clone the repository on your PC :
 ```
@@ -45,7 +45,7 @@ py Bomberman.py
 
 <br/>
 
-# <center> - Objectifs -
+# <center> - Objectifs - </center>
 
  <p>
 - Manipuler les variables et les types de données en Python.
