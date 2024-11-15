@@ -1,139 +1,143 @@
 import pygame
 import random
+
+# Import custom modules for game functionalities
 import game_settings as gs
 
 
-def starting_plate(nb_line, nb_column, bricks):
+def generate_simple_board(board_height, board_width, bricks_position):
+    """
+    Creates a game board with empty cells, indestructible walls, and breakable bricks.
+
+    :param board_height: The number of rows on the board.
+    :param board_width: The number of columns on the board.
+    :param bricks_position: A list of (x, y) tuples representing the positions of breakable bricks.
+    :return: A 2D list representing the game board.
+    """
+    # Initialize the board as an empty list to store rows
     plate = []
 
-    # Création du plateau avec des cases vides, et murs indestructibles en alternance sur les lignes, colonnes impaires
-    for i in range(nb_line):
+    # Create the board layout with empty cells and indestructible walls in a checkerboard pattern
+    for i in range(board_height):
         if i % 2 == 0:
-            ligne = [" " for _ in range(nb_column)]
+            # Row with only empty cells (" ")
+            row = [" " for _ in range(board_width)]
         else:
-            ligne = ["X" if j % 2 != 0 else " " for j in range(nb_column)]
-        plate.append(ligne)
-
-    # Ajout des briques au plateau de jeu
-    for (x, y) in bricks:
-        # On vérifie que les coordonnées sont valides
-        if 0 <= x < nb_line and 0 <= y < nb_column:
-            plate[x][y] = "B"
-    return plate
-
-
-def random_plate(nb_line, nb_column, iratio=None, dratio=None):
-
-    # Ratios aléatoires pour les murs indestructibles et cassables si non fournis
-    iratio = iratio or random.uniform(0, 0.2)
-    dratio = dratio or random.uniform(0, 0.4)
-
-    plate = []
-    for i in range(nb_line):
-        row = []
-        for j in range(nb_column):
-            random_value = random.random()
-            if random_value < iratio:
-                row.append("X")  # Mur indestructible
-            elif random_value < iratio + dratio:
-                row.append("B")  # Brique cassable
-            else:
-                row.append(" ")  # Case vide
+            # Row with indestructible walls ("X") on odd columns
+            row = ["X" if j % 2 != 0 else " " for j in range(board_width)]
         plate.append(row)
 
-    # Assurer une zone vide autour de la position initiale du joueur
-    x, y = gs.STARTING_PLAYER1_POSITION
-    if 0 <= x < nb_line and 0 <= y < nb_column:
-        plate[x][y] = " "  # Position initiale du joueur
-        if y + 1 < nb_column:
-            plate[x][y + 1] = " "
-        if x + 1 < nb_line:
-            plate[x + 1][y] = " "
-        if x + 1 < nb_line and y + 1 < nb_column:
-            plate[x + 1][y + 1] = " "
-
-    # Assurer une zone vide autour de la position initiale du joueur 2 (si elle existe dans game_settings)
-    if hasattr(gs, 'STARTING_PLAYER2_POSITION'):
-        x2, y2 = gs.STARTING_PLAYER2_POSITION
-        if 0 <= x2 < nb_line and 0 <= y2 < nb_column:
-            plate[x2][y2] = " "
-            if y2 - 1 >= 0:
-                plate[x2][y2 - 1] = " "
-            if x2 - 1 >= 0:
-                plate[x2 - 1][y2] = " "
-            if x2 - 1 >= 0 and y2 - 1 >= 0:
-                plate[x2 - 1][y2 - 1] = " "
-
-    # Assurer une zone vide autour de la position initiale des ennemis
-    for foe in gs.INITIAL_ENEMY_POSITIONS:
-        fx, fy = foe
-        if 0 <= fx < nb_line and 0 <= fy < nb_column:
-            plate[fx][fy] = " "
-            if fy + 1 < nb_column:
-                plate[fx][fy + 1] = " "
-            if fx + 1 < nb_line:
-                plate[fx + 1][fy] = " "
-            if fx + 1 < nb_line and fy + 1 < nb_column:
-                plate[fx + 1][fy + 1] = " "
+    # Place breakable bricks at specified positions
+    for (x, y) in bricks_position:
+        # Check that the brick position is within the board boundaries
+        if 0 <= x < board_height and 0 <= y < board_width:
+            plate[x][y] = "B"  # "B" represents a breakable brick
 
     return plate
 
 
-def view_plate(screen, plate, player1_position, foes):
-    for i, row in enumerate(plate):  # Parcourt chaque ligne du plateau (i -> index de la ligne, row -> contenu de la ligne)
-        for j, case in enumerate(row):  # Parcourt chaque case de la ligne (j -> index de la case, case -> contenu de la case)
+def clear_area(x, y, board_height, board_width, board):
+    """
+    Clears an area around a given position (x, y) on the game board, ensuring it is empty.
 
-            # Défini le rectangle pour la case actuelle
+    :param board:
+    :param board_width:
+    :param board_height:
+    :param x: The row index of the position to clear around.
+    :param y: The column index of the position to clear around.
+    :return: None
+    """
+    if 0 <= x < board_height and 0 <= y < board_width:
+        board[x][y] = " "  # Clear the main position
+    # Clear adjacent cells, with boundary checks
+    if 0 <= x < board_height and y + 1 < board_width:
+        board[x][y + 1] = " "  # Clear the cell to the right
+    if x + 1 < board_height and 0 <= y < board_width:
+        board[x + 1][y] = " "  # Clear the cell below
+    if x + 1 < board_height and y + 1 < board_width:
+        board[x + 1][y + 1] = " "  # Clear the cell diagonally down-right
+
+
+def generate_random_board(board_height, board_width, wall_ratio=None, brick_ratio=None):
+    """
+    Creates a randomized game board with empty cells, indestructible walls, and breakable bricks.
+    Ensures empty zones around the starting positions of players and enemies.
+
+    :param board_height: The number of rows on the board.
+    :param board_width: The number of columns on the board.
+    :param wall_ratio: The ratio of indestructible walls ("X") on the board (default: random value 0-0.2).
+    :param brick_ratio: The ratio of breakable bricks ("B") on the board (default: random value 0-0.4).
+    :return: A 2D list representing the game board where:
+             - " " represents an empty cell,
+             - "X" represents an indestructible wall,
+             - "B" represents a breakable brick.
+    """
+    # Set default ratios for indestructible and destructible blocks if not provided
+    wall_ratio = wall_ratio or random.uniform(0, 0.2)
+    brick_ratio = brick_ratio or random.uniform(0, 0.4)
+
+    # Initialize the board
+    board = []
+    for i in range(board_height):
+        row = []
+        for j in range(board_width):
+            random_value = random.random()
+            if random_value < wall_ratio:
+                row.append("X")  # Indestructible wall
+            elif random_value < wall_ratio + brick_ratio:
+                row.append("B")  # Breakable brick
+            else:
+                row.append(" ")  # Empty cell
+        board.append(row)
+
+    # Clear areas for player and enemy starting positions
+    clear_area(*gs.STARTING_PLAYER1_POSITION, board_height, board_width, board)
+    if hasattr(gs, 'STARTING_PLAYER2_POSITION'):
+        clear_area(*gs.STARTING_PLAYER2_POSITION, board_height, board_width, board)
+    for foe in gs.INITIAL_ENEMY_POSITIONS:
+        clear_area(*foe, board_height, board_width, board)
+
+    return board
+
+
+def view_board(screen, board, enemy_positions, player1_position, player2_position=None, is_player1_alive=True, is_player2_alive=True):
+    """
+    Renders a game board on the screen, displaying players, enemies, indestructible walls,
+    breakable bricks, and empty cells. Supports both single-player and two-player modes.
+
+    :param screen: The Pygame display surface where the board will be drawn.
+    :param board: A 2D list representing the game board, where each cell may contain:
+                  - "X" for indestructible walls,
+                  - "B" for breakable bricks,
+                  - " " for empty spaces.
+    :param player1_position: A tuple (row, col) representing the current position of player 1.
+    :param enemy_positions: A list of (row, col) tuples indicating the positions of enemies on the board.
+    :param player2_position: (Optional) A tuple (row, col) for the position of player 2, if in two-player mode.
+    :param is_player1_alive: Boolean indicating if player 1 is active (only affects rendering in two-player mode).
+    :param is_player2_alive: Boolean indicating if player 2 is active (only affects rendering in two-player mode).
+    :return: None
+    """
+    # Define colors for each cell type
+    colors = {
+        "X": gs.COLOR_INDESTRUCTIBLE_BLOCK,
+        "B": gs.COLOR_BREAKABLE_BRICK,
+        " ": gs.COLOR_EMPTY_CELL
+    }
+
+    for i, row in enumerate(board):
+        for j, case in enumerate(row):
+            # Define the rectangle for the current cell
             rect = j * gs.CELL_SIZE, i * gs.CELL_SIZE, gs.CELL_SIZE, gs.CELL_SIZE
 
-            # Vérifie si la position actuelle correspond à celle du joueur
-            if (i, j) == player1_position:
-                pygame.draw.rect(screen, gs.COLOR_PLAYER1, rect)
-
-            # Vérifie si la position actuelle correspond à celle d'un ennemi
-            elif (i, j) in foes:
-                pygame.draw.rect(screen, gs.COLOR_ENEMY, rect)
-
-            # Vérifie si la case actuelle est un mur indestructible
-            elif case == "X":
-                pygame.draw.rect(screen, gs.COLOR_INDESTRUCTIBLE_BLOCK, rect)
-
-            # Vérifie si la case actuelle est une brique cassable
-            elif case == "B":
-                pygame.draw.rect(screen, gs.COLOR_BREAKABLE_BRICK, rect)
-
-            # Affiche une case vide si elle ne contient ni joueur, ni ennemi, ni mur, ni brique cassable
+            # Determine the color based on the cell's content and entity presence
+            if is_player1_alive and (i, j) == player1_position:
+                color = gs.COLOR_PLAYER1
+            elif player2_position and is_player2_alive and (i, j) == player2_position:
+                color = gs.COLOR_PLAYER2
+            elif (i, j) in enemy_positions:
+                color = gs.COLOR_ENEMY
             else:
-                pygame.draw.rect(screen, gs.COLOR_EMPTY_CELL, rect)
+                color = colors.get(case, gs.COLOR_EMPTY_CELL)  # Default to empty cell color if case is unrecognized
 
-
-def view_plate_2p(screen, plate, player1_position, player2_position, foes, player1_live, player2_live):
-    for i, row in enumerate(plate):  # Parcourt chaque ligne du plateau (i -> index de la ligne, row -> contenu de la ligne)
-        for j, case in enumerate(row):  # Parcourt chaque case de la ligne (j -> index de la case, case -> contenu de la case)
-
-            # Défini le rectangle pour la case actuelle
-            rect = j * gs.CELL_SIZE, i * gs.CELL_SIZE, gs.CELL_SIZE, gs.CELL_SIZE
-
-            # Vérifie si la position actuelle correspond à celle du joueur
-            if player1_live and (i, j) == player1_position:
-                pygame.draw.rect(screen, gs.COLOR_PLAYER1, rect)
-
-            # Vérifie si la position actuelle correspond à celle du joueur 2, si défini
-            elif player2_live and (i, j) == player2_position:
-                pygame.draw.rect(screen, gs.COLOR_PLAYER2, rect)
-
-            # Vérifie si la position actuelle correspond à celle d'un ennemi
-            elif (i, j) in foes:
-                pygame.draw.rect(screen, gs.COLOR_ENEMY, rect)
-
-            # Vérifie si la case actuelle est un mur indestructible
-            elif case == "X":
-                pygame.draw.rect(screen, gs.COLOR_INDESTRUCTIBLE_BLOCK, rect)
-
-            # Vérifie si la case actuelle est une brique cassable
-            elif case == "B":
-                pygame.draw.rect(screen, gs.COLOR_BREAKABLE_BRICK, rect)
-
-            # Affiche une case vide si elle ne contient ni joueur, ni ennemi, ni mur, ni brique cassable
-            else:
-                pygame.draw.rect(screen, gs.COLOR_EMPTY_CELL, rect)
+            # Draw the rectangle with the determined color
+            pygame.draw.rect(screen, color, rect)

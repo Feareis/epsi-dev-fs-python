@@ -10,10 +10,10 @@ import game_settings as gs
 
 # --- Pygame Initialization and Configuration ---
 pygame.init()
-screen = pygame.display.set_mode((gs.WINDOW_SIZE, gs.WINDOW_SIZE), pygame.RESIZABLE)
+screen = pygame.display.set_mode((gs.WINDOW_SIZE, gs.WINDOW_SIZE))
+font = pygame.font.Font(None, 36)
 WHITE = gs.WHITE
 BLACK = gs.BLACK
-font = pygame.font.Font(None, 36)
 
 
 # --- Menu Functions ---
@@ -41,12 +41,17 @@ def display_menu(title, options):
         return current
 
     while True:
+        # Check if the screen surface is still available
+        if not pygame.display.get_surface():
+            quit_game()
+            return None  # Exit the menu if the display surface is quit
+
         # Clear screen and render title
         screen.fill(WHITE)
         title_text = font.render(title, True, BLACK)
         screen.blit(title_text, (gs.WINDOW_SIZE // 2 - title_text.get_width() // 2, 50))
 
-        # Render each menu option
+        # Display each option, highlighting the selected one
         for i, option in enumerate(options):
             if option == " ":
                 continue  # Skip empty options
@@ -223,9 +228,9 @@ def display_options_menu(game_mode="game"):
     choice = display_menu("- Options -", gs.OPTION_MENU)
 
     if choice == gs.MENU_LANGUAGES_OPTION:
-        print("Langue")  # Placeholder for language settings
+        print("Languages")  # Placeholder for language settings
     elif choice == gs.MENU_KEYBINDING_OPTION:
-        print("Keybinds")  # Placeholder for keybinding settings
+        print("Keybindings")  # Placeholder for keybinding settings
     elif choice == gs.MENU_BACK_OPTION:
         # Returns to the appropriate pause menu based on the game mode
         if game_mode == "game":

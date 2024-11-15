@@ -53,7 +53,7 @@ def run_game(load_saved=False):
     else:
         board_height, board_width = menu.display_size_menu() # Board dimensions (number of rows and columns)
         enemy_positions = gs.INITIAL_ENEMY_POSITIONS  # Initial enemy positions
-        board = plate.random_plate(board_height, board_width)  # Random game board
+        board = plate.generate_random_board(board_height, board_width)  # Random game board
         player_position = gs.STARTING_PLAYER1_POSITION  # Initial player position
         score = 1000  # Initial player score
 
@@ -116,7 +116,7 @@ def run_game(load_saved=False):
 
         # --- Drawing the board elements ---
         screen.fill(gs.COLOR_BACKGROUND)  # Background color
-        plate.view_plate(screen, board, player_position, enemy_positions)  # Draw the game board with player and enemies
+        plate.view_board(screen, board, enemy_positions, player_position)  # Draw the game board with player and enemies
 
         # --- Victory condition ---
         if not enemy_positions:

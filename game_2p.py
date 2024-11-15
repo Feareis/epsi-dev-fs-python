@@ -44,7 +44,7 @@ def run_game_2p():
     # --- Game parameters ---
     board_height, board_width = 13, 13  # Game board dimensions (number of rows and columns)
     enemy_positions = gs.INITIAL_ENEMY_POSITIONS  # Initial enemy positions
-    game_plate = plate.random_plate(board_height, board_width)  # Random game board setup
+    game_plate = plate.generate_random_board(board_height, board_width)  # Random game board setup
 
     # Initial positions and scores
     player1_position = gs.STARTING_PLAYER1_POSITION  # Starting position for player 1
@@ -130,7 +130,7 @@ def run_game_2p():
 
         # --- Draw game board and elements ---
         screen.fill(gs.COLOR_BACKGROUND)  # Background color
-        plate.view_plate_2p(screen, game_plate, player1_position, player2_position, enemy_positions, player1_live, player2_live)
+        plate.view_board(screen, game_plate, enemy_positions, player1_position, player2_position, player1_live, player2_live)
 
         # Victory conditions
         if not enemy_positions:
