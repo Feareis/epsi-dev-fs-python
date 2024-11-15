@@ -16,12 +16,15 @@
 
 ![projet bomberman](media/projet%20bomberman.png)
 
+
 # Use To Code -
 
 ![PyCharms](https://img.shields.io/badge/PyCharm-000000?style=for-the-badge&logo=pycharm&logoColor=white)
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 
-# Installation -
+<br/>
+
+# <center> - Installation -
 
 First, clone the repository on your PC :
 ```
@@ -40,7 +43,9 @@ To run the program, simply execute <b>Bomberman</b> :
 py Bomberman.py
 ```
 
- # (Rappel) Objectif pédagogique -
+<br/>
+
+# <center> - Objectifs -
 
  <p>
 - Manipuler les variables et les types de données en Python.
@@ -52,10 +57,11 @@ py Bomberman.py
 - Gérer les entrées utilisateurs.
 <br/>
 - Implémenter des fonctionnalités de base d’un jeu et introduire des éléments de gamification (niveaux, scores, etc.).
-
 </p>
 
-# Architecture du projet -
+<br/>
+
+# <center> - Architecture du projet -
 
 ```php
 ├── db/
@@ -76,8 +82,9 @@ py Bomberman.py
 └── requirements.txt
 ```
 
-# Choix techniques -
 <br/>
+
+# <center> - Choix techniques -
 
 <p style="text-align:justify;">
 Premièrement, le projet a été organisé en plusieurs modules distincts pour chaque fonctionnalité.
@@ -93,9 +100,9 @@ Le jeu est également conçu pour être évolutif grâce à des fonctionnalités
 Enfin, pour enrichir l’expérience de jeu, nous avons intégré un système de score : chaque déplacement réduit le score du joueur, l’encourageant ainsi à terminer le plus rapidement possible pour maximiser ses points. Ce score est enregistré dans la base de données des scores une fois la partie terminée, permettant aux joueurs de suivre leur progression.
 </p>
 
-
-# Spécificités du projet -
 <br/>
+
+# <center> - Spécificités du projet -
 
 <p style="text-align:justify;">
 Chaque aspect du jeu (gestion du joueur, des bombes, du plateau, des menus et de la base de données) est isolé dans un module spécifique (game.py, player.py, bomb.py, plate.py, menu.py, db.py).
@@ -113,8 +120,9 @@ Les ennemis se déplacent de manière aléatoire tout en étant capables de dét
 Possibilité de générer un plateau de jeu aléatoire avec des murs cassables et incassables disposés de manière irrégulière, offrant une expérience de jeu renouvelée à chaque partie. La taille du plateau est configurable dans les paramètres, permettant de varier la difficulté et les stratégies.
 </p>
 
-# Problèmes rencontrés -
 <br/>
+
+# <center> - Problèmes rencontrés -
 
 <p style="text-align:justify;">
 Au cours du projet, plusieurs défis ont émergé.
@@ -126,8 +134,9 @@ Ensuite, la gestion du chronomètre pour la durée limite de jeu a demandé plus
 Enfin, la répartition des fonctionnalités entre différents fichiers pour un code structuré et maintenable, tout en facilitant les interactions, a été un exercice de précision pour garantir la fluidité du jeu.
 </p>
 
-# Axes d'amélioration -
 <br/>
+
+# <center> - Axes d'amélioration -
 
 <p style="text-align:justify;">
 Pour améliorer le projet à l’avenir, plusieurs axes peuvent être envisagés. 
